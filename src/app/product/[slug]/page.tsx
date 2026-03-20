@@ -1,0 +1,245 @@
+import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
+import type { ProductDetail, ProductVariant, ProductOption, Review, Media } from "@/lib/types";
+import { fetchProductBySlug, fetchProductReviews, fetchProductRecommendations, type ProductWithVariants } from "@/lib/apiClient";
+import CustomerReviews from "@/components/product/CustomerReviews";
+import CompleteTheLook from "@/components/product/CompleteTheLook";
+import type { ComboProduct, ComboItem } from "@/types/combo";
+
+// Import loading skeleton
+import { ProductDetailSkeleton } from "@/components/ui/LoadingSpinner";
+
+// Lazy load product detail client for better performance
+const ProductDetailClient = dynamic(
+  () => import("@/components/product/ProductDetailClient"),
+  {
+    loading: () => <ProductDetailSkeleton />,
+  }
+);
+
+// Lazy load combo detail client
+const ComboDetailClient = dynamic(
+  () => import("@/components/product/ComboDetailClient"),
+  {
+    loading: () => <ProductDetailSkeleton />,
+  }
+);
+
+// Transform raw database product to ProductDetail type
+function transformToProductDetail(data: ProductWithVariants): ProductDetail {
+  const { product: raw, variants, images, inventory } = data;
+  
+  // Extract unique options from variants
+  const optionsMap = new Map<string, Set<string>>();
+  variants.forEach((variant: any) => {
+    if (variant.attributes) {
+      Object.entries(variant.attributes).forEach(([key, value]) => {
+        if (!optionsMap.has(key)) {
+          optionsMap.set(key, new Set());
+        }
+        optionsMap.get(key)!.add(String(value));
+      });
+    }
+  });
+  
+  // Convert to ProductOption format
+  const options: ProductOption[] = Array.from(optionsMap.entries()).map(([name, valuesSet]) => ({
+    id: name.toLowerCase().replace(/\s+/g, '-'),
+    name,
+    values: Array.from(valuesSet).sort()
+  }));
+  
+  // Transform variants to match ProductVariant interface
+  const transformedVariants: ProductVariant[] = variants.map((v: any) => ({
+    id: v.id,
+    options: v.attributes || {},
+    price: v.price || raw.price || 0,
+    stock: inventory[v.id]?.quantity_available || 0,
+    sku: v.sku || v.id
+  }));
+  
+  // Transform images
+  const transformedImages: Media[] = images
+    .sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0))
+    .map((img: any) => ({
+      url: img.image_url || '/placeholder-product.jpg',
+      alt: img.alt_text || raw.name || 'Product image'
+    }));
+  
+  // Calculate stock status
+  const totalStock = Object.values(inventory).reduce(
+    (sum: number, inv: any) => sum + (inv.quantity_available || 0), 
+    0
+  );
+  const stockStatus = totalStock === 0 ? 'out_of_stock' : 
+                      totalStock < 10 ? 'low_stock' : 'in_stock';
+  
+  // Get price range from variants
+  const prices = transformedVariants.map(v => v.price).filter(p => p > 0);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : (raw.price || 0);
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : (raw.price || 0);
+  
+  // Mock reviews for now (would come from database in production)
+  const reviews: Review[] = [
+    {
+      id: "r1",
+      author: "Anisha S.",
+      rating: 5,
+      title: "Excellent quality",
+      content: "Amazing product, exactly as described. Fast delivery!",
+      date: new Date().toISOString().split('T')[0]
+    }
+  ];
+  
+  return {
+    id: raw.id,
+    slug: raw.slug,
+    name: raw.name || 'Unnamed Product',
+    description: raw.description || 'No description available',
+    price: minPrice,
+    compareAtPrice: maxPrice > minPrice ? maxPrice : undefined,
+    currency: "NPR",
+    vendor: {
+      id: raw.vendor_id || 'unknown',
+      name: raw.vendor?.display_name || 'KB Stylish',
+      rating: 4.8
+    },
+    images: transformedImages.length > 0 ? transformedImages : [
+      { url: '/placeholder-product.jpg', alt: 'Product placeholder' }
+    ],
+    options,
+    variants: transformedVariants,
+    badges: raw.is_featured ? ['Featured'] : [],
+    avgRating: raw.average_rating || 0,
+    reviewCount: raw.review_count || 0,
+    reviews,
+    stockStatus,
+    shipping: {
+      estimated: "2-4 days in KTM | 3-6 days nationwide",
+      cost: "Free over NPR 2,000 | NPR 99 standard",
+      codAvailable: true
+    },
+    returns: {
+      days: 7,
+      summary: "7-day easy returns on unused items with tags."
+    }
+  };
+}
+
+export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
+  const { slug } = params;
+  
+  // Fetch product from database with caching
+  const productData = await fetchProductBySlug(slug);
+  
+  // Handle product not found
+  if (!productData) {
+    notFound();
+  }
+  
+  // Check if this is a combo product
+  const isCombo = productData.product?.is_combo === true;
+  
+  if (isCombo) {
+    // Transform combo data for ComboDetailClient
+    const combo: ComboProduct = {
+      id: productData.product.id,
+      name: productData.product.name || 'Unnamed Combo',
+      slug: productData.product.slug,
+      description: productData.product.description || '',
+      is_combo: true,
+      combo_price_cents: productData.product.combo_price_cents || 0,
+      combo_savings_cents: productData.product.combo_savings_cents || 0,
+      combo_quantity_limit: productData.product.combo_quantity_limit,
+      combo_quantity_sold: productData.product.combo_quantity_sold || 0,
+      images: productData.images?.map((img: any) => ({
+        url: img.image_url,
+        alt: img.alt_text || productData.product.name
+      })) || [],
+      vendor_id: productData.product.vendor_id,
+      category_id: productData.product.category_id,
+      is_active: productData.product.is_active,
+      is_featured: productData.product.is_featured,
+      created_at: productData.product.created_at,
+      updated_at: productData.product.updated_at,
+    };
+    
+    // Transform combo items (constituents)
+    const constituents: ComboItem[] = (productData.combo_items || []).map((item: any) => ({
+      id: item.id,
+      combo_product_id: item.combo_product_id,
+      constituent_product_id: item.constituent_product_id,
+      constituent_variant_id: item.constituent_variant_id,
+      quantity: item.quantity,
+      display_order: item.display_order,
+      product: item.product ? {
+        id: item.product.id,
+        name: item.product.name,
+        slug: item.product.slug,
+        description: item.product.description,
+        images: item.product.images || [],
+      } : undefined,
+      variant: item.variant ? {
+        id: item.variant.id,
+        sku: item.variant.sku,
+        price: item.variant.price,
+        options: item.variant.options || {},
+      } : undefined,
+    }));
+    
+    return (
+      <main className="bg-[#F5F5F5]">
+        <ComboDetailClient combo={combo} constituents={constituents} />
+      </main>
+    );
+  }
+  
+  // Regular product flow
+  // Transform to ProductDetail type
+  const product: ProductDetail = transformToProductDetail(productData);
+  
+  // Fetch real recommendations from curation engine (self-healing: auto-filters inactive/out-of-stock)
+  const recommendations = await fetchProductRecommendations(product.id, 4);
+  
+  // TEMP FIX: Skip server-side review fetching to avoid duplicates
+  // The client-side Edge Function (review-manager v7) handles review fetching
+  const initialReviews: any[] = [];
+  const reviewStats = {
+    average: product.avgRating,
+    total: product.reviewCount,
+    distribution: {}
+  };
+
+  // Review eligibility will be determined client-side via API call
+  // This prevents SSR hydration issues with auth state
+  // The API endpoint /api/user/reviews/eligibility will verify:
+  // 1. User is authenticated
+  // 2. User has purchased this product
+  // 3. Order is delivered/completed
+  // 4. Review window hasn't expired (90 days)
+  // 5. User hasn't already reviewed this product
+
+  return (
+    <main className="bg-[#F5F5F5]">
+      <ProductDetailClient product={product} />
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <CustomerReviews 
+            productId={product.id}
+            avgRating={reviewStats.average} 
+            reviewCount={reviewStats.total} 
+            initialReviews={initialReviews}
+            stats={reviewStats}
+          />
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <CompleteTheLook 
+            recommendations={recommendations}
+            sourceProductId={product.id}
+          />
+        </div>
+      </div>
+    </main>
+  );
+}

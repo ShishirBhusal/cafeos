@@ -1,0 +1,86 @@
+/* Global Dropdown Theming for KB Stylish */
+/* Light mode styling for all dropdowns */
+
+select {
+  /* Base styling - Light mode */
+  background-color: white;
+  border: 1px solid rgb(209 213 219); /* gray-300 */
+  color: rgb(17 24 39); /* gray-900 */
+  
+  /* Option styling - light background */
+  option {
+    background-color: white;
+    color: rgb(17 24 39); /* gray-900 */
+    padding: 0.5rem;
+  }
+  
+  /* Selected option */
+  option:checked {
+    background-color: var(--kb-primary-brand);
+    color: white;
+  }
+  
+  /* Hover state for options */
+  option:hover {
+    background-color: rgb(243 244 246); /* gray-100 */
+  }
+}
+
+/* Specific styling for form selects */
+select.form-select,
+select[class*="rounded"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Focus state */
+select:focus {
+  outline: none;
+  border-color: var(--kb-primary-brand);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Disabled state */
+select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgb(249 250 251); /* gray-50 */
+}
+
+/* Mobile optimization - prevent zoom on focus */
+@media screen and (max-width: 768px) {
+  select {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+}
+
+/* Thin scrollbars for all scrollable elements - Light mode */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
