@@ -199,7 +199,7 @@ export default function ExpensesClient({
   return (
     <main className="max-w-2xl mx-auto p-4">
       {/* Date Navigation */}
-      <div className="bg-white rounded-2xl p-3 mb-4 shadow-sm border border-stone-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl p-3 mb-4 shadow-sm border border-stone-200 flex items-center justify-between">
         <button
           onClick={() => goToDate('prev')}
           className="p-2 hover:bg-stone-100 rounded-xl transition-colors"
@@ -221,7 +221,7 @@ export default function ExpensesClient({
                 setSelectedDate(today);
                 loadExpensesForDate(today);
               }}
-              className="text-xs text-amber-600 hover:underline mt-1"
+              className="text-xs text-stone-500 hover:underline mt-1"
             >
               Go to Today
             </button>
@@ -239,7 +239,7 @@ export default function ExpensesClient({
 
       {/* Daily Profit Summary - The Hisab Kitab */}
       {currentProfit && (
-        <div className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl p-6 mb-4 shadow-lg text-white">
+        <div className="bg-stone-900 rounded-xl p-6 mb-4 shadow-lg text-white">
           <h2 className="text-lg font-medium opacity-90 mb-4">आजको हिसाब किताब</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -272,7 +272,7 @@ export default function ExpensesClient({
       )}
 
       {/* Today's Expenses Total */}
-      <div className="bg-white rounded-2xl p-6 mb-4 shadow-sm text-center border border-stone-200">
+      <div className="bg-white rounded-xl p-6 mb-4 shadow-sm text-center border border-stone-200">
         <p className="text-sm text-stone-500 mb-1">Today's Expenses</p>
         <p className="text-3xl font-bold text-rose-600 tabular-nums">{formatPrice(totalCents)}</p>
       </div>
@@ -281,7 +281,7 @@ export default function ExpensesClient({
       {!isAdding && isToday && (
         <button
           onClick={() => setIsAdding(true)}
-          className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 mb-4"
+          className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white font-semibold rounded-xl flex items-center justify-center gap-2 mb-4"
         >
           <Plus className="w-5 h-5" />
           Add Expense
@@ -296,7 +296,7 @@ export default function ExpensesClient({
 
       {/* Add Expense Form */}
       {isAdding && (
-        <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-stone-200">
+        <div className="bg-white rounded-xl p-4 mb-4 shadow-sm border border-stone-200">
           <h2 className="font-bold text-stone-900 mb-4">New Expense</h2>
           
           {/* Category */}
@@ -310,7 +310,7 @@ export default function ExpensesClient({
                   onClick={() => setCategory(cat.id)}
                   className={`p-3 rounded-xl border-2 text-center transition-colors ${
                     category === cat.id 
-                      ? 'border-amber-500 bg-amber-50' 
+                      ? 'border-stone-500 bg-stone-50' 
                       : 'border-stone-200 hover:border-stone-300'
                   }`}
                 >
@@ -331,7 +331,7 @@ export default function ExpensesClient({
               placeholder="e.g., Milk 10L"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-500"
+              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-stone-500"
             />
           </div>
 
@@ -343,7 +343,7 @@ export default function ExpensesClient({
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-500"
+              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-stone-500"
             />
           </div>
 
@@ -355,7 +355,7 @@ export default function ExpensesClient({
               placeholder="e.g., DDC Dairy"
               value={supplier}
               onChange={(e) => setSupplier(e.target.value)}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-500"
+              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-stone-500"
             />
           </div>
 
@@ -370,7 +370,7 @@ export default function ExpensesClient({
             <button
               onClick={addExpense}
               disabled={isSubmitting}
-              className="flex-1 py-3 bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-stone-900 hover:bg-stone-800 disabled:bg-stone-300 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -386,7 +386,7 @@ export default function ExpensesClient({
       )}
 
       {/* Expenses List */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-stone-200">
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-stone-200">
         <div className="p-4 border-b border-stone-100">
           <h2 className="font-bold text-stone-900">
             {isToday ? "Today's" : formatDateDisplay(selectedDate)} Expenses

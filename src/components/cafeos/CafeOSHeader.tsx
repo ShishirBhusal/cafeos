@@ -116,9 +116,8 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
     { href: '/cafe/settings', label: 'Settings', icon: Settings },
   ];
 
-  // Don't show header on certain pages (full screen modes)
-  const hideHeaderPaths = ['/cafe/counter', '/cafe/kitchen'];
-  if (hideHeaderPaths.some(p => pathname?.startsWith(p))) {
+  // Don't show header on cafe management pages (sidebar handles navigation)
+  if (pathname?.startsWith('/cafe/')) {
     return null;
   }
   
@@ -131,7 +130,7 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Coffee className="w-8 h-8 text-orange-600" />
+            <Coffee className="w-8 h-8 text-stone-900" />
             <span className="text-xl font-bold text-gray-900">CafeOS</span>
           </Link>
 
@@ -143,8 +142,8 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
                 href={link.href}
                 className={`text-sm font-medium transition-colors ${
                   pathname === link.href 
-                    ? 'text-orange-600' 
-                    : 'text-gray-600 hover:text-orange-600'
+                    ? 'text-stone-900' 
+                    : 'text-gray-600 hover:text-stone-900'
                 }`}
               >
                 {link.label}
@@ -160,8 +159,8 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-orange-600" />
+                  <div className="w-8 h-8 bg-stone-100 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-stone-900" />
                   </div>
                   <span className="hidden md:block text-sm font-medium text-gray-700">
                     {userInfo?.displayName || 'Account'}
@@ -182,7 +181,7 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
                             key={item.href}
                             href={item.href}
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-stone-50 hover:text-stone-900"
                           >
                             <item.icon className="w-4 h-4" />
                             {item.label}
@@ -206,13 +205,13 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
               <div className="flex items-center gap-3">
                 <Link
                   href="/auth/login"
-                  className="text-sm font-medium text-gray-600 hover:text-orange-600"
+                  className="text-sm font-medium text-gray-600 hover:text-stone-900"
                 >
                   Login
                 </Link>
                 <Link
-                  href="/auth/register"
-                  className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                  href="/auth/login?mode=signup"
+                  className="bg-stone-900 hover:bg-stone-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                 >
                   Get Started
                 </Link>
@@ -244,7 +243,7 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium ${
                     pathname === link.href
-                      ? 'bg-orange-50 text-orange-600'
+                      ? 'bg-stone-50 text-stone-900'
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >

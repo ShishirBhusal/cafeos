@@ -1,38 +1,15 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import Link from 'next/link';
-import { formatRs } from '@/lib/formatRs';
-import { 
-  ArrowLeft, 
-  Search, 
-  Filter,
-  Clock,
-  CheckCircle,
-  XCircle,
-  CreditCard,
-  ChefHat,
-  Banknote,
-  Smartphone,
-  Users,
-  TrendingUp,
-  AlertCircle,
-  MoreVertical,
-  Eye,
-  Printer,
-  RefreshCw,
-  Calendar,
-  MapPin
-} from 'lucide-react';
 import OrdersClient from '@/components/cafe/OrdersClient';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 import { getNepaliDateString, nepalDateToUTCRange } from '@/lib/nepalTime';
 
 export const dynamic = 'force-dynamic';
 
 async function createClient() {
   const cookieStore = await cookies();
-  
+
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -65,14 +42,7 @@ interface PageProps {
 
 export default async function CafeOrdersPage({ searchParams }: PageProps) {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/orders');
-  }
-  
-  if (!user.capabilities.canAccessCafeDashboard) {
-    redirect('/');
-  }
+  if (!user) return null; // layout handles redirect
 
   const { status, payment, date } = await searchParams;
   const supabase = await createClient();
@@ -149,6 +119,7 @@ export default async function CafeOrdersPage({ searchParams }: PageProps) {
   };
 
   return (
+    <CafePageLayout title="Orders" description="View and manage orders">
     <OrdersClient
       cafeId={cafeId}
       cafeName={cafeProfile?.business_name || 'My Cafe'}
@@ -169,5 +140,6 @@ export default async function CafeOrdersPage({ searchParams }: PageProps) {
       initialStats={stats}
       initialFilter={{ payment, status, date }}
     />
+    </CafePageLayout>
   );
 }

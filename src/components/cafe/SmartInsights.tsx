@@ -52,7 +52,7 @@ function getInsightIcon(type: InsightData['type']) {
 function getInsightStyle(type: InsightData['type']) {
   switch (type) {
     case 'success': return 'bg-emerald-50 border-emerald-200 text-emerald-800';
-    case 'warning': return 'bg-amber-50 border-amber-200 text-amber-800';
+    case 'warning': return 'bg-stone-50 border-stone-200 text-stone-800';
     case 'opportunity': return 'bg-blue-50 border-blue-200 text-blue-800';
     default: return 'bg-stone-50 border-stone-200 text-stone-800';
   }
@@ -61,7 +61,7 @@ function getInsightStyle(type: InsightData['type']) {
 function getIconStyle(type: InsightData['type']) {
   switch (type) {
     case 'success': return 'bg-emerald-100 text-emerald-600';
-    case 'warning': return 'bg-amber-100 text-amber-600';
+    case 'warning': return 'bg-stone-100 text-stone-500';
     case 'opportunity': return 'bg-blue-100 text-blue-600';
     default: return 'bg-stone-100 text-stone-600';
   }

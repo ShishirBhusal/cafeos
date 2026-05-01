@@ -161,7 +161,7 @@ export default async function CafeWebsitePage({ params }: PageProps) {
       {/* Hero Section */}
       <div className="relative text-white">
         {/* Banner Image */}
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500">
+        <div className="absolute inset-0 bg-stone-900">
           {profile.banner_url && (
             <Image
               src={profile.banner_url}
@@ -197,11 +197,11 @@ export default async function CafeWebsitePage({ params }: PageProps) {
           <div className="max-w-6xl mx-auto">
             <div className="flex items-start gap-4 mb-4">
               {/* Logo */}
-              <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0">
+              <div className="w-20 h-20 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0">
                 {profile.logo_url ? (
                   <Image src={profile.logo_url} alt={cafe.business_name} width={80} height={80} className="object-cover" />
                 ) : (
-                  <UtensilsCrossed className="w-10 h-10 text-orange-600" />
+                  <UtensilsCrossed className="w-10 h-10 text-stone-600" />
                 )}
               </div>
               <div>
@@ -255,7 +255,7 @@ export default async function CafeWebsitePage({ params }: PageProps) {
             <div className="flex flex-wrap gap-3 relative z-20">
               <Link
                 href={`/${slug}/menu`}
-                className="flex items-center gap-2 px-6 py-3 bg-white text-orange-600 rounded-xl font-semibold hover:bg-orange-50 transition-colors select-none"
+                className="flex items-center gap-2 px-6 py-3 bg-white text-stone-900 rounded-xl font-semibold hover:bg-stone-50 transition-colors select-none"
               >
                 <Menu className="w-5 h-5" />
                 See Full Menu
@@ -290,7 +290,7 @@ export default async function CafeWebsitePage({ params }: PageProps) {
       {/* Daily Special Banner */}
       {profile.daily_special_active && profile.daily_special_name && (
         <div className="max-w-6xl mx-auto px-6 -mt-6 relative z-10">
-          <div className="bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+          <div className="bg-stone-900 rounded-xl p-4 flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
@@ -314,17 +314,17 @@ export default async function CafeWebsitePage({ params }: PageProps) {
         {/* Description */}
         {profile.description && (
           <section className="mb-12">
-            <p className="text-gray-600 text-lg leading-relaxed">{profile.description}</p>
+            <p className="text-stone-600 text-lg leading-relaxed">{profile.description}</p>
           </section>
         )}
 
         {/* Quick Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-          <div className="bg-orange-50 rounded-2xl p-6">
-            <Clock className="w-8 h-8 text-orange-600 mb-3" />
-            <h3 className="font-semibold text-gray-900">Opening Hours</h3>
+          <div className="bg-stone-50 rounded-xl p-6">
+            <Clock className="w-8 h-8 text-stone-600 mb-3" />
+            <h3 className="font-semibold text-stone-900">Opening Hours</h3>
             {profile.opening_hours && (
-              <p className="text-gray-600 text-sm mt-1">
+              <p className="text-stone-600 text-sm mt-1">
                 {profile.opening_hours.monday?.open} - {profile.opening_hours.monday?.close}
               </p>
             )}
@@ -334,9 +334,9 @@ export default async function CafeWebsitePage({ params }: PageProps) {
           </div>
           
           {cafe.contact_phone && (
-            <div className="bg-blue-50 rounded-2xl p-6">
+            <div className="bg-blue-50 rounded-xl p-6">
               <Phone className="w-8 h-8 text-blue-600 mb-3" />
-              <h3 className="font-semibold text-gray-900">Contact</h3>
+              <h3 className="font-semibold text-stone-900">Contact</h3>
               <a href={`tel:${cafe.contact_phone}`} className="text-blue-600 text-sm mt-1 hover:underline block">
                 {cafe.contact_phone}
               </a>
@@ -344,10 +344,10 @@ export default async function CafeWebsitePage({ params }: PageProps) {
           )}
 
           {(profile.address_line1 || profile.area) && (
-            <div className="bg-green-50 rounded-2xl p-6">
+            <div className="bg-green-50 rounded-xl p-6">
               <MapPin className="w-8 h-8 text-green-600 mb-3" />
-              <h3 className="font-semibold text-gray-900">Location</h3>
-              <p className="text-gray-600 text-sm mt-1">
+              <h3 className="font-semibold text-stone-900">Location</h3>
+              <p className="text-stone-600 text-sm mt-1">
                 {profile.address_line1 && <span>{profile.address_line1}<br/></span>}
                 {profile.area}, {profile.city || 'Kathmandu'}
               </p>
@@ -368,13 +368,13 @@ export default async function CafeWebsitePage({ params }: PageProps) {
         {/* Categories */}
         {categories.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">What We Serve</h2>
+            <h2 className="text-2xl font-bold text-stone-900 mb-6">What We Serve</h2>
             <div className="flex flex-wrap gap-3">
               {categories.map((cat, i) => (
                 <Link
                   key={i}
                   href={`/${slug}/menu`}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-orange-100 hover:text-orange-700 rounded-full font-medium text-gray-700 transition-colors"
+                  className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 rounded-full font-medium text-stone-700 transition-colors"
                 >
                   {cat}
                 </Link>
@@ -387,15 +387,15 @@ export default async function CafeWebsitePage({ params }: PageProps) {
         {featuredItems.length > 0 && (
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Popular Items</h2>
-              <Link href={`/${slug}/menu`} className="text-orange-600 font-medium hover:underline flex items-center gap-1">
+              <h2 className="text-2xl font-bold text-stone-900">Popular Items</h2>
+              <Link href={`/${slug}/menu`} className="text-stone-600 font-medium hover:underline flex items-center gap-1">
                 View All <ExternalLink className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {featuredItems.map((item: any) => (
-                <div key={item.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-video bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
+                <div key={item.id} className="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-video bg-stone-100 flex items-center justify-center">
                     {item.product_images?.[0]?.image_url ? (
                       <Image 
                         src={item.product_images[0].image_url} 
@@ -405,14 +405,14 @@ export default async function CafeWebsitePage({ params }: PageProps) {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <UtensilsCrossed className="w-12 h-12 text-orange-300" />
+                      <UtensilsCrossed className="w-12 h-12 text-stone-300" />
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                    <h3 className="font-semibold text-stone-900">{item.name}</h3>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-sm text-gray-500">{item.categories?.name || 'Menu Item'}</span>
-                      <span className="font-bold text-orange-600">
+                      <span className="text-sm text-stone-500">{item.categories?.name || 'Menu Item'}</span>
+                      <span className="font-bold text-stone-900">
                         Rs {item.product_variants?.[0]?.price || '—'}
                       </span>
                     </div>
@@ -427,32 +427,32 @@ export default async function CafeWebsitePage({ params }: PageProps) {
         {reviews && reviews.length > 0 && (
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Customer Reviews</h2>
+              <h2 className="text-2xl font-bold text-stone-900">Customer Reviews</h2>
               <div className="flex items-center gap-2">
                 <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-                <span className="text-2xl font-bold text-gray-900">{avgRating}</span>
-                <span className="text-gray-500">({reviews.length} reviews)</span>
+                <span className="text-2xl font-bold text-stone-900">{avgRating}</span>
+                <span className="text-stone-500">({reviews.length} reviews)</span>
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               {reviews.slice(0, 4).map((review: Review) => (
-                <div key={review.id} className="bg-gray-50 rounded-2xl p-5">
+                <div key={review.id} className="bg-stone-50 rounded-xl p-5">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <Star 
                           key={i} 
-                          className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                          className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-stone-300'}`} 
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-stone-500">
                       {new Date(review.created_at).toLocaleDateString('en-NP', { month: 'short', year: 'numeric' })}
                     </span>
                   </div>
-                  {review.comment && <p className="text-gray-700">{review.comment}</p>}
+                  {review.comment && <p className="text-stone-700">{review.comment}</p>}
                   {review.reviewer_name && (
-                    <p className="text-sm text-gray-500 mt-2">— {review.reviewer_name}</p>
+                    <p className="text-sm text-stone-500 mt-2">— {review.reviewer_name}</p>
                   )}
                 </div>
               ))}
@@ -461,14 +461,14 @@ export default async function CafeWebsitePage({ params }: PageProps) {
         )}
 
         {/* CTA */}
-        <section className="bg-gradient-to-r from-orange-600 to-amber-500 rounded-3xl p-8 md:p-12 text-center text-white">
+        <section className="bg-stone-900 rounded-xl p-8 md:p-12 text-center text-white">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to Order?</h2>
           <p className="text-white/90 mb-6 max-w-md mx-auto">
             Browse our full menu and discover your new favorite dishes
           </p>
           <Link
             href={`/${slug}/menu`}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-orange-600 rounded-xl font-bold hover:bg-orange-50 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-stone-900 rounded-xl font-bold hover:bg-stone-50 transition-colors"
           >
             <Menu className="w-5 h-5" />
             View Complete Menu
@@ -477,19 +477,19 @@ export default async function CafeWebsitePage({ params }: PageProps) {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 mt-16">
+      <footer className="bg-stone-900 text-white py-12 mt-16">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-stone-800 rounded-xl flex items-center justify-center">
                 <Coffee className="w-5 h-5" />
               </div>
               <div>
                 <p className="font-semibold">{cafe.business_name}</p>
-                <p className="text-sm text-gray-400">Powered by CafeOS</p>
+                <p className="text-sm text-stone-400">Powered by CafeOS</p>
               </div>
             </div>
-            <div className="flex items-center gap-6 text-sm text-gray-400">
+            <div className="flex items-center gap-6 text-sm text-stone-400">
               <Link href="/explore" className="hover:text-white">Explore Cafes</Link>
               <Link href={`/${slug}/menu`} className="hover:text-white">Menu</Link>
               {cafe.contact_phone && (
@@ -497,7 +497,7 @@ export default async function CafeWebsitePage({ params }: PageProps) {
               )}
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+          <div className="mt-8 pt-8 border-t border-stone-800 text-center text-sm text-stone-500">
             © {new Date().getFullYear()} {cafe.business_name}. Website by CafeOS.
           </div>
         </div>

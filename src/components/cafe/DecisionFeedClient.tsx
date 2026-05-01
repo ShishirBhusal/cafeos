@@ -46,14 +46,14 @@ const priorityConfig = {
     icon: AlertTriangle,
   },
   today: {
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
-    iconBg: 'bg-amber-100',
-    iconColor: 'text-amber-600',
-    titleColor: 'text-amber-900',
-    descColor: 'text-amber-700',
-    actionBg: 'bg-amber-600 hover:bg-amber-700',
-    badge: 'bg-amber-600 text-white',
+    bg: 'bg-stone-50',
+    border: 'border-stone-200',
+    iconBg: 'bg-stone-100',
+    iconColor: 'text-stone-500',
+    titleColor: 'text-stone-900',
+    descColor: 'text-stone-700',
+    actionBg: 'bg-stone-900 hover:bg-stone-800',
+    badge: 'bg-stone-900 text-white',
     badgeText: 'आज',
     icon: Clock,
   },
@@ -144,7 +144,7 @@ export default function DecisionFeedClient({ cafeId, compact = false }: Decision
 
   if (loading && decisions.length === 0) {
     return (
-      <div className={`${compact ? 'p-4' : 'p-6'} bg-white rounded-2xl border border-stone-200`}>
+      <div className={`${compact ? 'p-4' : 'p-6'} bg-white rounded-xl border border-stone-200`}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-stone-100 rounded-lg animate-pulse" />
           <div className="flex-1">
@@ -159,7 +159,7 @@ export default function DecisionFeedClient({ cafeId, compact = false }: Decision
   // No decisions = all clear
   if (decisions.length === 0) {
     return (
-      <div className={`${compact ? 'p-4' : 'p-6'} bg-emerald-50 rounded-2xl border border-emerald-200`}>
+      <div className={`${compact ? 'p-4' : 'p-6'} bg-emerald-50 rounded-xl border border-emerald-200`}>
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 rounded-xl">
             <CheckCircle2 className="w-5 h-5 text-emerald-600" />
@@ -180,7 +180,7 @@ export default function DecisionFeedClient({ cafeId, compact = false }: Decision
     const Icon = typeIcons[topDecision.type] || config.icon;
 
     return (
-      <div className={`p-4 ${config.bg} rounded-2xl border ${config.border}`}>
+      <div className={`p-4 ${config.bg} rounded-xl border ${config.border}`}>
         <div className="flex items-start gap-3">
           <div className={`p-2 ${config.iconBg} rounded-xl flex-shrink-0`}>
             <Icon className={`w-5 h-5 ${config.iconColor}`} />
@@ -218,7 +218,7 @@ export default function DecisionFeedClient({ cafeId, compact = false }: Decision
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-stone-900 flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-amber-600" />
+          <Sparkles className="w-4 h-4 text-stone-500" />
           निर्णय खोज्नुहोस् (Decisions)
         </h3>
         <button
@@ -237,7 +237,7 @@ export default function DecisionFeedClient({ cafeId, compact = false }: Decision
         return (
           <div
             key={`${decision.type}-${index}`}
-            className={`p-4 ${config.bg} rounded-2xl border ${config.border} transition-all hover:shadow-md`}
+            className={`p-4 ${config.bg} rounded-xl border ${config.border} transition-all hover:shadow-md`}
           >
             <div className="flex items-start gap-3">
               <div className={`p-2.5 ${config.iconBg} rounded-xl flex-shrink-0`}>

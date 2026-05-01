@@ -189,7 +189,7 @@ export default function FixedCostsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-stone-600" />
       </div>
     );
   }
@@ -213,20 +213,20 @@ export default function FixedCostsPage() {
 
       <main className="max-w-2xl mx-auto p-4">
         {/* Daily Share Summary */}
-        <div className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl p-6 mb-4 shadow-lg text-white">
+        <div className="bg-stone-900 rounded-xl p-6 mb-4 shadow-lg text-white">
           <div className="flex items-center gap-3 mb-2">
             <Wallet className="w-6 h-6" />
             <h2 className="text-lg font-medium">Daily Fixed Cost Share</h2>
           </div>
           <p className="text-3xl font-bold">{formatPrice(dailyShare)}</p>
-          <p className="text-sm text-orange-100 mt-1">
+          <p className="text-sm text-stone-300 mt-1">
             This amount is automatically deducted from your daily profit calculation
           </p>
         </div>
 
         {/* Quick Add Common Costs */}
         {costs.length === 0 && (
-          <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+          <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-3">Quick Add Common Costs</h3>
             <div className="grid grid-cols-2 gap-2">
               {COMMON_COSTS.map(common => {
@@ -235,9 +235,9 @@ export default function FixedCostsPage() {
                   <button
                     key={common.name}
                     onClick={() => addQuickCost(common)}
-                    className="flex items-center gap-2 p-3 border border-gray-200 rounded-xl hover:bg-orange-50 hover:border-orange-200 transition-colors text-left"
+                    className="flex items-center gap-2 p-3 border border-gray-200 rounded-xl hover:bg-stone-50 hover:border-stone-200 transition-colors text-left"
                   >
-                    <Icon className="w-5 h-5 text-orange-600" />
+                    <Icon className="w-5 h-5 text-stone-600" />
                     <div>
                       <p className="text-sm font-medium text-gray-900">{common.name}</p>
                       <p className="text-xs text-gray-500">Rs {common.defaultAmount.toLocaleString()}/mo</p>
@@ -253,7 +253,7 @@ export default function FixedCostsPage() {
         {!isAdding && (
           <button
             onClick={() => setIsAdding(true)}
-            className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 mb-4"
+            className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white font-semibold rounded-xl flex items-center justify-center gap-2 mb-4"
           >
             <Plus className="w-5 h-5" />
             Add Fixed Cost
@@ -262,7 +262,7 @@ export default function FixedCostsPage() {
 
         {/* Add Cost Form */}
         {isAdding && (
-          <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+          <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
             <h2 className="font-semibold text-gray-900 mb-4">New Fixed Cost</h2>
             
             {/* Name */}
@@ -273,7 +273,7 @@ export default function FixedCostsPage() {
                 placeholder="e.g., Rent, Staff Salary"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-stone-500"
               />
             </div>
 
@@ -285,7 +285,7 @@ export default function FixedCostsPage() {
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-stone-500"
               />
             </div>
 
@@ -300,7 +300,7 @@ export default function FixedCostsPage() {
                     onClick={() => setFrequency(freq)}
                     className={`py-2 px-3 rounded-lg border-2 text-sm font-medium transition-colors ${
                       frequency === freq
-                        ? 'border-orange-500 bg-orange-50 text-orange-700'
+                        ? 'border-stone-500 bg-stone-50 text-stone-700'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300'
                     }`}
                   >
@@ -325,7 +325,7 @@ export default function FixedCostsPage() {
               <button
                 onClick={addCost}
                 disabled={isSubmitting}
-                className="flex-1 py-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-stone-900 hover:bg-stone-800 disabled:bg-gray-300 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -341,7 +341,7 @@ export default function FixedCostsPage() {
         )}
 
         {/* Fixed Costs List */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-900">Your Fixed Costs</h2>
           </div>

@@ -125,11 +125,11 @@ export default function OrderTrackingClient({
   // Get status-specific colors
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'orange';
+      case 'pending': return 'yellow';
       case 'preparing': return 'blue';
       case 'ready': return 'green';
       case 'served': return 'gray';
-      default: return 'orange';
+      default: return 'yellow';
     }
   };
 
@@ -160,7 +160,7 @@ export default function OrderTrackingClient({
         {/* Token Display */}
         <div className="text-center mb-8">
           <p className="text-white/80 text-sm mb-2">Your Token Number</p>
-          <div className="inline-block bg-white rounded-2xl px-8 py-4 shadow-lg">
+          <div className="inline-block bg-white rounded-xl px-8 py-4 shadow-lg">
             <span className="text-6xl font-bold text-gray-900">
               #{ticket?.tokenNumber || '—'}
             </span>
@@ -172,18 +172,18 @@ export default function OrderTrackingClient({
           {/* Current Status */}
           <div className="text-center mb-6">
             <div className={`w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center ${
-              currentStatus === 'pending' ? 'bg-orange-100' :
+              currentStatus === 'pending' ? 'bg-yellow-100' :
               currentStatus === 'preparing' ? 'bg-blue-100 animate-pulse' :
               currentStatus === 'ready' ? 'bg-green-100' :
               'bg-gray-100'
             }`}>
-              {currentStatus === 'pending' && <Clock className="w-10 h-10 text-orange-600" />}
+              {currentStatus === 'pending' && <Clock className="w-10 h-10 text-yellow-600" />}
               {currentStatus === 'preparing' && <ChefHat className="w-10 h-10 text-blue-600" />}
               {currentStatus === 'ready' && <Bell className="w-10 h-10 text-green-600" />}
               {currentStatus === 'served' && <Check className="w-10 h-10 text-gray-600" />}
             </div>
             <h2 className={`text-2xl font-bold ${
-              currentStatus === 'pending' ? 'text-orange-600' :
+              currentStatus === 'pending' ? 'text-yellow-600' :
               currentStatus === 'preparing' ? 'text-blue-600' :
               currentStatus === 'ready' ? 'text-green-600' :
               'text-gray-600'
@@ -207,7 +207,7 @@ export default function OrderTrackingClient({
                   <div className="flex flex-col items-center">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       isCompleted ? 'bg-green-500 text-white' :
-                      isCurrent ? 'bg-orange-500 text-white' :
+                      isCurrent ? 'bg-stone-900 text-white' :
                       'bg-gray-200 text-gray-400'
                     }`}>
                       {isCompleted ? (
@@ -250,14 +250,14 @@ export default function OrderTrackingClient({
             </div>
             <div className="flex justify-between text-sm text-gray-500">
               <span>Total</span>
-              <span className="font-bold text-orange-600">{formatPrice(order.totalCents)}</span>
+              <span className="font-bold text-stone-700">{formatPrice(order.totalCents)}</span>
             </div>
           </div>
         </div>
 
         {/* Payment Reminder */}
         {order.paymentStatus === 'unpaid' && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
             <p className="text-sm text-yellow-800 text-center">
               💰 Remember to pay <strong>{formatPrice(order.totalCents)}</strong> at the counter
             </p>
@@ -266,7 +266,7 @@ export default function OrderTrackingClient({
 
         {/* Ready Alert */}
         {currentStatus === 'ready' && (
-          <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-6 text-center animate-pulse">
+          <div className="bg-green-50 border-2 border-green-300 rounded-xl p-6 text-center animate-pulse">
             <Bell className="w-12 h-12 text-green-600 mx-auto mb-3" />
             <h3 className="text-xl font-bold text-green-800">Your Order is Ready!</h3>
             <p className="text-green-600 mt-1">Please collect from the counter</p>

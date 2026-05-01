@@ -122,7 +122,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-stone-200 p-6">
+      <div className="bg-white rounded-xl border border-stone-200 p-6">
         <div className="flex items-center gap-3 animate-pulse">
           <div className="w-10 h-10 bg-stone-100 rounded-xl" />
           <div className="flex-1">
@@ -136,7 +136,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
 
   if (eligibleCustomers.length === 0) {
     return (
-      <div className="bg-stone-50 rounded-2xl border border-stone-200 p-6 text-center">
+      <div className="bg-stone-50 rounded-xl border border-stone-200 p-6 text-center">
         <Trophy className="w-10 h-10 text-stone-300 mx-auto mb-2" />
         <p className="font-medium text-stone-600">No reward-eligible customers right now</p>
         <p className="text-sm text-stone-400 mt-1">Customers become eligible at every 10 visits</p>
@@ -146,7 +146,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
 
   return (
     <>
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-5 text-white">
+      <div className="bg-gradient-to-r from-stone-800 to-stone-600 rounded-xl p-5 text-white">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-white/20 rounded-xl">
             <Gift className="w-6 h-6" />
@@ -174,7 +174,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                      <Star className="w-5 h-5 text-amber-200" />
+                      <Star className="w-5 h-5 text-stone-300" />
                     </div>
                     <div>
                       <p className="font-semibold">{customer.customer_name || 'Customer'}</p>
@@ -198,7 +198,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
                         <button
                           onClick={() => quickIssue(customer)}
                           disabled={isIssuing}
-                          className="px-4 py-2 bg-white text-amber-700 rounded-xl font-medium hover:bg-amber-50 transition-colors disabled:opacity-50 flex items-center gap-2"
+                          className="px-4 py-2 bg-white text-stone-700 rounded-xl font-medium hover:bg-stone-50 transition-colors disabled:opacity-50 flex items-center gap-2"
                         >
                           {isIssuing ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -234,7 +234,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
       {/* Custom Reward Modal */}
       {showModal && selectedCustomer && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+          <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-lg text-stone-900">Custom Reward</h3>
               <button
@@ -255,7 +255,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
                 <select
                   value={customReward.type}
                   onChange={(e) => setCustomReward(prev => ({ ...prev, type: e.target.value }))}
-                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
                 >
                   <option value="free_item">Free Item</option>
                   <option value="discount">Discount</option>
@@ -271,7 +271,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
                   value={customReward.description}
                   onChange={(e) => setCustomReward(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="e.g., Free Masala Tea"
-                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
                 />
               </div>
 
@@ -282,7 +282,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
                   value={customReward.value}
                   onChange={(e) => setCustomReward(prev => ({ ...prev, value: parseInt(e.target.value) || 0 }))}
                   placeholder="50"
-                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
                 />
               </div>
             </div>
@@ -302,7 +302,7 @@ export default function CustomerRewardsClient({ cafeId, userId }: CustomerReward
                   customReward.value * 100
                 )}
                 disabled={issuing !== null}
-                className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-xl font-medium hover:bg-amber-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {issuing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
                 Issue Reward

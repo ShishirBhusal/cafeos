@@ -8,7 +8,7 @@ import { AuthSessionManager } from "@/components/AuthSessionManager";
 import { createServerClient } from '@supabase/ssr';
 import type { UserCapability } from "@/lib/types";
 
-// CafeOS Header - orange branding
+// CafeOS Header - stone branding
 const CafeOSHeader = dynamic(() => import("@/components/cafeos/CafeOSHeader"), {
   loading: () => (
     <div className="sticky top-0 z-50 bg-white border-b border-gray-200 h-16" aria-label="Loading header" />

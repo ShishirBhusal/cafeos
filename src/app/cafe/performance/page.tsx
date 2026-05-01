@@ -1,10 +1,9 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
+import CafePageLayout from '@/components/cafe/CafePageLayout';
+import {
   TrendingUp,
   DollarSign,
   ShoppingCart,
@@ -57,14 +56,7 @@ interface ShiftStats {
 
 export default async function PerformanceDashboardPage() {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/performance');
-  }
-  
-  if (!user.capabilities.canAccessCafeDashboard) {
-    redirect('/');
-  }
+  if (!user) return null;
 
   const supabase = await createClient();
   
@@ -180,23 +172,8 @@ export default async function PerformanceDashboardPage() {
   const formatPrice = (cents: number) => `Rs ${(cents / 100).toLocaleString('en-NP')}`;
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link href="/cafe/dashboard" className="p-2 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Staff Performance</h1>
-              <p className="text-sm text-gray-500">Last 30 days • {cafeProfile?.business_name}</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto p-4 space-y-6">
+    <CafePageLayout title="Performance" description="Track business performance">
+      <div className="space-y-6">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl p-4 shadow-sm">
@@ -234,7 +211,7 @@ export default async function PerformanceDashboardPage() {
 
         {/* Leaderboard */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-orange-500 to-amber-500">
+          <div className="px-4 py-3 border-b border-gray-200 bg-stone-900">
             <h2 className="font-bold text-white flex items-center gap-2">
               <Award className="w-5 h-5" />
               Staff Leaderboard
@@ -254,9 +231,9 @@ export default async function PerformanceDashboardPage() {
                   <div className="flex items-center gap-4">
                     {/* Rank */}
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${
-                      index === 0 ? 'bg-amber-100 text-amber-700' :
+                      index === 0 ? 'bg-stone-100 text-stone-700' :
                       index === 1 ? 'bg-gray-200 text-gray-700' :
-                      index === 2 ? 'bg-orange-100 text-orange-700' :
+                      index === 2 ? 'bg-stone-100 text-stone-600' :
                       'bg-gray-100 text-gray-500'
                     }`}>
                       {index + 1}
@@ -285,7 +262,7 @@ export default async function PerformanceDashboardPage() {
                     
                     {/* Stats */}
                     <div className="text-right">
-                      <div className="text-lg font-bold text-orange-600">
+                      <div className="text-lg font-bold text-stone-700">
                         {formatPrice(staff.total_sales_cents)}
                       </div>
                       {staff.total_shifts > 0 && (
@@ -341,8 +318,8 @@ export default async function PerformanceDashboardPage() {
             href="/cafe/customers"
             className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3"
           >
-            <div className="p-2 bg-amber-100 rounded-lg">
-              <Users className="w-5 h-5 text-amber-600" />
+            <div className="p-2 bg-stone-100 rounded-lg">
+              <Users className="w-5 h-5 text-stone-500" />
             </div>
             <div>
               <h4 className="font-medium text-gray-900">Customer Insights</h4>
@@ -350,7 +327,7 @@ export default async function PerformanceDashboardPage() {
             </div>
           </Link>
         </div>
-      </main>
-    </div>
+      </div>
+    </CafePageLayout>
   );
 }

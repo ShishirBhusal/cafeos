@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 import DailyStoryPageClient from './DailyStoryPageClient';
 
 export const dynamic = 'force-dynamic';
@@ -26,8 +26,7 @@ async function createClient() {
 
 export default async function DailyStoryPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/auth/login?redirect=/cafe/story');
-  if (!user.capabilities.canAccessCafeDashboard) redirect('/');
+  if (!user) return null;
 
   const supabase = await createClient();
 
@@ -44,10 +43,12 @@ export default async function DailyStoryPage() {
   const { data: story } = await supabase.rpc('get_daily_story', { p_cafe_id: cafeId });
 
   return (
-    <DailyStoryPageClient
-      cafeId={cafeId}
-      cafeName={cafeName}
-      initialStory={story}
-    />
+    <CafePageLayout title="Aaja Ko Katha" description="Your daily story">
+      <DailyStoryPageClient
+        cafeId={cafeId}
+        cafeName={cafeName}
+        initialStory={story}
+      />
+    </CafePageLayout>
   );
 }

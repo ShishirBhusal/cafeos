@@ -188,7 +188,7 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
         {!weeklyData || error ? (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8 text-center">
+          <div className="bg-white rounded-xl border border-stone-200 p-8 text-center">
             <BarChart3 className="w-12 h-12 text-stone-300 mx-auto mb-3" />
             <p className="font-medium text-stone-600">No data for this week</p>
             <p className="text-sm text-stone-400 mt-1">Start taking orders to see your weekly review</p>
@@ -196,7 +196,7 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
         ) : (
           <>
             {/* Hero Stats */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-5">
+            <div className="bg-white rounded-xl border border-stone-200 p-5">
               <div className="grid grid-cols-2 gap-4">
                 {/* Revenue */}
                 <div className="col-span-2 sm:col-span-1">
@@ -242,15 +242,15 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
 
             {/* Key Metrics */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white rounded-2xl border border-stone-200 p-4 text-center">
-                <ShoppingBag className="w-6 h-6 text-amber-600 mx-auto mb-2" />
+              <div className="bg-white rounded-xl border border-stone-200 p-4 text-center">
+                <ShoppingBag className="w-6 h-6 text-stone-500 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-stone-900 tabular-nums">
                   {weeklyData.what_happened.total_orders}
                 </p>
                 <p className="text-xs text-stone-500">Orders</p>
               </div>
               
-              <div className="bg-white rounded-2xl border border-stone-200 p-4 text-center">
+              <div className="bg-white rounded-xl border border-stone-200 p-4 text-center">
                 <Users className="w-6 h-6 text-blue-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-stone-900 tabular-nums">
                   {weeklyData.what_happened.new_customers}
@@ -258,7 +258,7 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
                 <p className="text-xs text-stone-500">New Customers</p>
               </div>
 
-              <div className="bg-white rounded-2xl border border-stone-200 p-4 text-center">
+              <div className="bg-white rounded-xl border border-stone-200 p-4 text-center">
                 <DollarSign className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-stone-900 tabular-nums">
                   {weeklyData.what_happened.total_orders > 0 
@@ -270,18 +270,18 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
             </div>
 
             {/* Highlights */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-5">
+            <div className="bg-white rounded-xl border border-stone-200 p-5">
               <h3 className="font-bold text-stone-900 mb-4 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-600" />
+                <Sparkles className="w-4 h-4 text-stone-500" />
                 Hafta Ka Highlights
               </h3>
 
               <div className="space-y-4">
                 {/* Top Item */}
                 {weeklyData.what_happened.top_item && (
-                  <div className="flex items-center gap-4 p-3 bg-amber-50 rounded-xl">
-                    <div className="p-2 bg-amber-100 rounded-lg">
-                      <Trophy className="w-5 h-5 text-amber-600" />
+                  <div className="flex items-center gap-4 p-3 bg-stone-50 rounded-xl">
+                    <div className="p-2 bg-stone-100 rounded-lg">
+                      <Trophy className="w-5 h-5 text-stone-500" />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-stone-900">Top Seller</p>
@@ -290,7 +290,7 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-amber-700 tabular-nums">
+                      <p className="font-bold text-stone-700 tabular-nums">
                         {formatRs(weeklyData.what_happened.top_item.revenue_cents)}
                       </p>
                     </div>
@@ -340,7 +340,7 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
             </div>
 
             {/* Insights */}
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-200 p-5">
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-5">
               <h3 className="font-bold text-purple-900 mb-3 flex items-center gap-2">
                 <Star className="w-4 h-4 text-purple-600" />
                 Ke Bujhne?

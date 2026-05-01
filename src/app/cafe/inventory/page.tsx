@@ -1,24 +1,8 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  Package,
-  Plus,
-  AlertTriangle,
-  TrendingDown,
-  Search,
-  Filter,
-  Droplets,
-  Wheat,
-  Milk,
-  Beef,
-  Coffee,
-  MoreHorizontal
-} from 'lucide-react';
 import InventoryClient from '@/components/cafe/InventoryClient';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,14 +33,7 @@ async function createClient() {
 
 export default async function InventoryPage() {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/inventory');
-  }
-  
-  if (!user.capabilities.canAccessCafeDashboard) {
-    redirect('/');
-  }
+  if (!user) return null; // layout handles redirect
 
   const supabase = await createClient();
   
@@ -90,12 +67,14 @@ export default async function InventoryPage() {
     .order('name');
 
   return (
-    <InventoryClient
-      cafeId={cafeId}
-      cafeName={cafeProfile?.business_name || 'My Cafe'}
-      initialIngredients={ingredients || []}
-      stockAlerts={stockAlerts || []}
-      menuItems={menuItems || []}
-    />
+    <CafePageLayout title="Saman Hisab" description="Inventory management">
+      <InventoryClient
+        cafeId={cafeId}
+        cafeName={cafeProfile?.business_name || 'My Cafe'}
+        initialIngredients={ingredients || []}
+        stockAlerts={stockAlerts || []}
+        menuItems={menuItems || []}
+      />
+    </CafePageLayout>
   );
 }

@@ -241,7 +241,7 @@ export default function RecipesClient({
                 }
                 setShowAddModal(true);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-xl font-medium hover:bg-amber-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-colors"
             >
               <Plus className="w-5 h-5" />
               Add Recipe
@@ -253,32 +253,32 @@ export default function RecipesClient({
       <main className="max-w-4xl mx-auto p-4 space-y-6">
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Menu Items</div>
             <div className="text-2xl font-bold text-stone-900 tabular-nums">{menuItems.length}</div>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">With Recipe</div>
             <div className="text-2xl font-bold text-emerald-600 tabular-nums">{recipes.length}</div>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">No Recipe</div>
-            <div className="text-2xl font-bold text-amber-600 tabular-nums">{unlinkedItems.length}</div>
+            <div className="text-2xl font-bold text-stone-500 tabular-nums">{unlinkedItems.length}</div>
           </div>
         </div>
 
         {/* No ingredients warning */}
         {ingredients.length === 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-stone-500 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-medium text-amber-800">No Ingredients Added</h3>
-              <p className="text-sm text-amber-700 mt-1">
+              <h3 className="font-medium text-stone-800">No Ingredients Added</h3>
+              <p className="text-sm text-stone-700 mt-1">
                 You need to add ingredients in the Inventory page before creating recipes.
               </p>
               <Link
                 href="/cafe/inventory"
-                className="mt-2 inline-block px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 text-sm"
+                className="mt-2 inline-block px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800 text-sm"
               >
                 Go to Inventory →
               </Link>
@@ -294,12 +294,12 @@ export default function RecipesClient({
             placeholder="Search menu items..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-500"
           />
         </div>
 
         {/* Menu Items with Recipe Status */}
-        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           <div className="px-5 py-3 border-b border-stone-200 bg-stone-50">
             <h2 className="font-bold text-stone-900">Menu Items</h2>
           </div>
@@ -328,7 +328,7 @@ export default function RecipesClient({
                               Recipe linked
                             </span>
                           ) : (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-700">
                               No recipe
                             </span>
                           )}
@@ -341,8 +341,8 @@ export default function RecipesClient({
                               {margin !== null && (
                                 <span className={`font-medium ${
                                   margin >= 60 ? 'text-emerald-600' :
-                                  margin >= 40 ? 'text-amber-600' :
-                                  margin >= 0 ? 'text-amber-600' : 'text-rose-600'
+                                  margin >= 40 ? 'text-stone-500' :
+                                  margin >= 0 ? 'text-stone-500' : 'text-rose-600'
                                 }`}>
                                   {margin}% margin
                                 </span>
@@ -381,7 +381,7 @@ export default function RecipesClient({
       {/* Add Recipe Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-bold text-stone-900">Add Recipe</h2>
               <button onClick={resetForm} className="p-2 hover:bg-stone-100 rounded-lg">
@@ -397,7 +397,7 @@ export default function RecipesClient({
                 <select
                   value={selectedProduct}
                   onChange={(e) => setSelectedProduct(e.target.value)}
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                 >
                   <option value="">Select a menu item...</option>
                   {unlinkedItems.map(item => (
@@ -418,7 +418,7 @@ export default function RecipesClient({
                   value={servings}
                   onChange={(e) => setServings(parseInt(e.target.value) || 1)}
                   min={1}
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                 />
               </div>
 
@@ -428,7 +428,7 @@ export default function RecipesClient({
                   <label className="text-sm font-medium text-stone-700">Ingredients *</label>
                   <button
                     onClick={handleAddIngredientRow}
-                    className="text-sm text-amber-600 hover:text-amber-700 flex items-center gap-1"
+                    className="text-sm text-stone-500 hover:text-stone-700 flex items-center gap-1"
                   >
                     <Plus className="w-4 h-4" /> Add ingredient
                   </button>
@@ -449,7 +449,7 @@ export default function RecipesClient({
                             updated[index].ingredient_id = e.target.value;
                             setRecipeIngredients(updated);
                           }}
-                          className="flex-1 px-2 py-1.5 border border-stone-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          className="flex-1 px-2 py-1.5 border border-stone-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-stone-500"
                         >
                           <option value="">Select...</option>
                           {ingredients.map(ing => (
@@ -468,7 +468,7 @@ export default function RecipesClient({
                             setRecipeIngredients(updated);
                           }}
                           placeholder="Qty"
-                          className="w-20 px-2 py-1.5 border border-stone-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          className="w-20 px-2 py-1.5 border border-stone-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-stone-500"
                         />
                         <span className="text-xs text-stone-400 w-8">
                           {ingredients.find(i => i.id === ri.ingredient_id)?.unit || ''}
@@ -494,7 +494,7 @@ export default function RecipesClient({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="e.g., Boil water first, then add tea leaves..."
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500 resize-none"
                   rows={2}
                 />
               </div>
@@ -512,7 +512,7 @@ export default function RecipesClient({
                   ? Math.round(((item.price_cents - perServingCost) / item.price_cents) * 100)
                   : 0;
                 return (
-                  <div className="bg-amber-50 rounded-xl p-3 text-sm space-y-1">
+                  <div className="bg-stone-50 rounded-xl p-3 text-sm space-y-1">
                     {servings > 1 && (
                       <div className="flex justify-between text-stone-500">
                         <span>Batch cost ({servings} servings):</span>
@@ -530,8 +530,8 @@ export default function RecipesClient({
                         <span className="text-stone-600">Margin:</span>
                         <span className={`font-bold ${
                           margin >= 60 ? 'text-emerald-600' :
-                          margin >= 40 ? 'text-amber-600' :
-                          margin >= 0 ? 'text-amber-600' : 'text-rose-600'
+                          margin >= 40 ? 'text-stone-500' :
+                          margin >= 0 ? 'text-stone-500' : 'text-rose-600'
                         }`}>
                           {margin}%
                         </span>
@@ -557,7 +557,7 @@ export default function RecipesClient({
               <button
                 onClick={handleSaveRecipe}
                 disabled={isSaving}
-                className="flex-1 px-4 py-3 bg-amber-600 text-white rounded-xl font-medium hover:bg-amber-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isSaving ? 'Saving...' : (
                   <>

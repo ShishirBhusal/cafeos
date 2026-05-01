@@ -1,15 +1,11 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
+import CafePageLayout from '@/components/cafe/CafePageLayout';
+import {
   Plus,
   Pencil,
-  Trash2,
-  ToggleLeft,
-  ToggleRight,
   Search
 } from 'lucide-react';
 
@@ -42,14 +38,7 @@ async function createClient() {
 
 export default async function CafeMenuPage() {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/menu');
-  }
-  
-  if (!user.capabilities.canManageCafeMenu) {
-    redirect('/');
-  }
+  if (!user) return null;
 
   const supabase = await createClient();
   
@@ -91,38 +80,24 @@ export default async function CafeMenuPage() {
   const activeCount = (products || []).filter((p: any) => p.is_active).length;
   const totalCount = (products || []).length;
 
-  return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 px-4 py-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <Link href="/cafe/dashboard" className="p-2 hover:bg-stone-100 rounded-lg">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-              <div>
-                <h1 className="text-xl font-bold text-stone-900">Menu Management</h1>
-                <p className="text-sm text-stone-500">{activeCount} active / {totalCount} total items</p>
-              </div>
-            </div>
-            <Link
-              href="/cafe/menu/new"
-              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-xl flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add Item
-            </Link>
-          </div>
-        </div>
-      </header>
+  const addItemAction = (
+    <Link
+      href="/cafe/menu/new"
+      className="px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-xl flex items-center gap-2"
+    >
+      <Plus className="w-4 h-4" />
+      Add Item
+    </Link>
+  );
 
-      <main className="max-w-4xl mx-auto p-4">
+  return (
+    <CafePageLayout title="Menu" description="Manage your menu items" actions={addItemAction}>
+      <div>
         {Object.entries(groupedItems).length > 0 ? (
           Object.entries(groupedItems).map(([categoryName, items]: [string, any]) => (
             <div key={categoryName} className="mb-6">
               <h2 className="text-lg font-bold text-stone-900 mb-3">{categoryName}</h2>
-              <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="divide-y divide-stone-100">
                   {items.map((item: any) => (
                     <div 
@@ -145,7 +120,7 @@ export default async function CafeMenuPage() {
                           {(item.product_variants || []).map((v: any) => (
                             <span 
                               key={v.id}
-                              className="text-sm px-2 py-1 bg-amber-50 text-amber-700 rounded-lg tabular-nums"
+                              className="text-sm px-2 py-1 bg-stone-50 text-stone-700 rounded-lg tabular-nums"
                             >
                               {formatPrice(v.price)}
                             </span>
@@ -168,7 +143,7 @@ export default async function CafeMenuPage() {
             </div>
           ))
         ) : (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+          <div className="bg-white rounded-xl p-12 text-center shadow-sm">
             <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-stone-400" />
             </div>
@@ -176,14 +151,14 @@ export default async function CafeMenuPage() {
             <p className="text-stone-500 mb-4">Add your first menu item to get started</p>
             <Link
               href="/cafe/menu/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-xl"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-xl"
             >
               <Plus className="w-4 h-4" />
               Add First Item
             </Link>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </CafePageLayout>
   );
 }

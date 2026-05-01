@@ -68,7 +68,7 @@ function MiniSparkline({ data }: { data: { variance_cents: number }[] }) {
   return (
     <svg width={w} height={h} className="inline-block">
       <line x1="0" y1={zeroY} x2={w} y2={zeroY} stroke="#d1d5db" strokeWidth="1" strokeDasharray="3,3" />
-      <polyline fill="none" stroke="#f97316" strokeWidth="2" points={points} />
+      <polyline fill="none" stroke="#78716c" strokeWidth="2" points={points} />
       {values.map((v, i) => (
         <circle key={i} cx={i * step} cy={parseFloat(points.split(' ')[i]?.split(',')[1] || '0')} r="3"
           fill={v >= 0 ? '#22c55e' : '#ef4444'} />
@@ -168,7 +168,7 @@ export default function CloseShiftModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+      <div className="bg-white rounded-xl w-full max-w-md shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-bold text-gray-900">
@@ -188,11 +188,11 @@ export default function CloseShiftModal({
           <div className="p-6 space-y-6">
             {/* Paisa Darpan — Cash Flow Waterfall */}
             {loadingIntel ? (
-              <div className="bg-orange-50 rounded-xl p-4 flex items-center justify-center gap-2 text-sm text-gray-500">
+              <div className="bg-stone-50 rounded-xl p-4 flex items-center justify-center gap-2 text-sm text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" /> Loading cash flow...
               </div>
             ) : cashFlow ? (
-              <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 space-y-2">
+              <div className="bg-gradient-to-br from-stone-50 to-stone-100 rounded-xl p-4 space-y-2">
                 <h3 className="text-sm font-bold text-gray-700 mb-3">💰 Paisa Darpan — Cash Flow</h3>
                 {cashFlow.waterfall.map((item, i) => {
                   const isPositive = item.amount_cents >= 0;
@@ -204,7 +204,7 @@ export default function CloseShiftModal({
                       <div className="flex-1 h-6 bg-gray-100 rounded-lg overflow-hidden relative">
                         <div
                           className={`h-full rounded-lg transition-all ${
-                            item.type === 'total' ? 'bg-orange-500' :
+                            item.type === 'total' ? 'bg-stone-700' :
                             item.type === 'start' ? 'bg-gray-400' :
                             item.type === 'info' ? 'bg-purple-400' :
                             isPositive ? 'bg-green-400' : 'bg-red-400'
@@ -213,7 +213,7 @@ export default function CloseShiftModal({
                         />
                       </div>
                       <span className={`w-20 text-right font-mono text-xs font-bold ${
-                        item.type === 'total' ? 'text-orange-600' :
+                        item.type === 'total' ? 'text-stone-700' :
                         item.type === 'info' ? 'text-purple-600' :
                         isPositive ? 'text-green-600' : 'text-red-600'
                       }`}>
@@ -225,7 +225,7 @@ export default function CloseShiftModal({
                 })}
               </div>
             ) : (
-              <div className="bg-orange-50 rounded-xl p-4 space-y-3">
+              <div className="bg-stone-50 rounded-xl p-4 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Shift Duration</span>
                   <span className="font-medium">{shiftDuration()}</span>
@@ -238,9 +238,9 @@ export default function CloseShiftModal({
                   <span className="text-gray-600">Opening Float</span>
                   <span className="font-medium">{formatPrice(shiftData.opening_float_cents)}</span>
                 </div>
-                <div className="border-t border-orange-200 pt-3 flex justify-between">
+                <div className="border-t border-stone-200 pt-3 flex justify-between">
                   <span className="text-gray-700 font-medium">Expected Cash</span>
-                  <span className="text-lg font-bold text-orange-600">{formatPrice(expectedCash)}</span>
+                  <span className="text-lg font-bold text-stone-700">{formatPrice(expectedCash)}</span>
                 </div>
               </div>
             )}
@@ -257,7 +257,7 @@ export default function CloseShiftModal({
                   value={actualCash}
                   onChange={(e) => setActualCash(e.target.value)}
                   placeholder="0"
-                  className="w-full pl-12 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-0"
+                  className="w-full pl-12 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-stone-500 focus:ring-0"
                   autoFocus
                 />
               </div>
@@ -294,7 +294,7 @@ export default function CloseShiftModal({
 
             <button
               onClick={handleProceedToConfirm}
-              className="w-full py-4 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors"
+              className="w-full py-4 bg-stone-900 text-white rounded-xl font-semibold hover:bg-stone-800 transition-colors"
             >
               Continue
             </button>
@@ -340,7 +340,7 @@ export default function CloseShiftModal({
                   value={varianceReason}
                   onChange={(e) => setVarianceReason(e.target.value)}
                   placeholder="e.g., Gave change of Rs 50 by mistake"
-                  className="w-full p-3 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-0 resize-none"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:border-stone-500 focus:ring-0 resize-none"
                   rows={2}
                 />
               </div>
@@ -356,7 +356,7 @@ export default function CloseShiftModal({
               <button
                 onClick={handleCloseShift}
                 disabled={isClosing}
-                className="flex-1 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-stone-900 text-white rounded-xl font-semibold hover:bg-stone-800 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isClosing ? (
                   <>
@@ -439,7 +439,7 @@ export default function CloseShiftModal({
 
             <button
               onClick={handleDone}
-              className="w-full py-4 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700"
+              className="w-full py-4 bg-stone-900 text-white rounded-xl font-semibold hover:bg-stone-800"
             >
               Done
             </button>

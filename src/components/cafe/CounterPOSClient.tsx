@@ -2,12 +2,12 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { 
-  ShoppingCart, 
-  Plus, 
-  Minus, 
-  Trash2, 
-  CreditCard, 
+import Link from 'next/link';
+import {
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
   Banknote,
   Smartphone,
   UtensilsCrossed,
@@ -17,12 +17,12 @@ import {
   Check,
   Loader2,
   Search,
-  Grid3X3,
-  List,
   Clock,
   DollarSign,
   User,
-  Star
+  Star,
+  ArrowLeft,
+  CreditCard,
 } from 'lucide-react';
 import CloseShiftModal from './CloseShiftModal';
 import OpenShiftModal from './OpenShiftModal';
@@ -58,7 +58,6 @@ interface CartItem {
   notes?: string;
 }
 
-// Extract variant display name from SKU (e.g., "TTH-TEA-S" → "S", "TTH-VMOMO-F" → "Fried")
 function getVariantDisplayName(sku: string): string {
   const suffix = sku.split('-').pop() || '';
   const displayMap: Record<string, string> = {
@@ -86,7 +85,7 @@ export default function CounterPOSClient({
   userId,
 }: CounterPOSClientProps) {
   const supabase = createClient();
-  
+
   // State
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -103,16 +102,15 @@ export default function CounterPOSClient({
     tokenNumber: number;
     totalCents: number;
   } | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showCustomerFields, setShowCustomerFields] = useState(false);
   const [phoneError, setPhoneError] = useState('');
 
   const validateNepalPhone = (phone: string): boolean => {
-    if (!phone) return true; // Empty is fine (optional)
+    if (!phone) return true;
     const cleaned = phone.replace(/\s|-/g, '');
     return /^(97|98)\d{8}$/.test(cleaned);
   };
-  
+
   // Shift state
   const [shiftData, setShiftData] = useState<{
     has_open_shift: boolean;
@@ -124,7 +122,7 @@ export default function CounterPOSClient({
   } | null>(null);
   const [showOpenShiftModal, setShowOpenShiftModal] = useState(false);
   const [showCloseShiftModal, setShowCloseShiftModal] = useState(false);
-  
+
   // Customer recognition state
   const [recognizedCustomer, setRecognizedCustomer] = useState<{
     name: string;
@@ -135,10 +133,9 @@ export default function CounterPOSClient({
     { id: string; name: string; phone: string; total_visits: number }[]
   >([]);
 
-  // Cart persistence key
   const CART_STORAGE_KEY = `cafeos_pos_cart_${cafeId}`;
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
@@ -154,7 +151,7 @@ export default function CounterPOSClient({
     }
   }, [cafeId]);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage
   useEffect(() => {
     try {
       if (cart.length > 0) {
@@ -167,30 +164,25 @@ export default function CounterPOSClient({
     }
   }, [cart, CART_STORAGE_KEY]);
 
-  // Fetch shift status on mount
   useEffect(() => {
     fetchShiftStatus();
     fetchRecentCustomers();
   }, [cafeId]);
-  
+
   const fetchShiftStatus = async () => {
     const { data, error } = await supabase.rpc('get_current_shift', { p_cafe_id: cafeId });
-    if (!error && data) {
-      setShiftData(data);
-    }
+    if (!error && data) setShiftData(data);
   };
-  
+
   const fetchRecentCustomers = async () => {
-    const { data, error } = await supabase.rpc('get_recent_cafe_customers', { 
-      p_cafe_id: cafeId, 
-      p_limit: 5 
+    const { data, error } = await supabase.rpc('get_recent_cafe_customers', {
+      p_cafe_id: cafeId,
+      p_limit: 5
     });
-    if (!error && data) {
-      setRecentCustomers(data || []);
-    }
+    if (!error && data) setRecentCustomers(data || []);
   };
-  
-  // Customer phone lookup with debounce
+
+  // Customer phone lookup
   useEffect(() => {
     if (customerPhone.length >= 10) {
       const timer = setTimeout(async () => {
@@ -213,31 +205,28 @@ export default function CounterPOSClient({
     }
   }, [customerPhone, cafeId]);
 
-  // Computed values
+  // Computed
   const subtotalCents = cart.reduce((sum, item) => sum + (item.quantity * item.unit_price_cents), 0);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Filter menu items
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = !selectedCategory || item.category_id === selectedCategory;
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.variants.some(v => v.sku.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
-  // Get unique categories from menu items
-  const activeCategories = categories.filter(cat => 
+  const activeCategories = categories.filter(cat =>
     menuItems.some(item => item.category_id === cat.id)
   );
 
-  // Add item to cart
   const addToCart = useCallback((item: MenuItem, variant: MenuItem['variants'][0]) => {
     setCart(prev => {
       const existing = prev.find(c => c.variant_id === variant.id);
       if (existing) {
-        return prev.map(c => 
-          c.variant_id === variant.id 
+        return prev.map(c =>
+          c.variant_id === variant.id
             ? { ...c, quantity: c.quantity + 1 }
             : c
         );
@@ -251,12 +240,9 @@ export default function CounterPOSClient({
         unit_price_cents: variant.price_cents,
       }];
     });
-    
-    // Quick feedback
     toast.success(`${item.name} added`, { duration: 1000, position: 'bottom-right' });
   }, []);
 
-  // Update cart item quantity
   const updateQuantity = useCallback((variantId: string, delta: number) => {
     setCart(prev => {
       return prev.map(item => {
@@ -269,29 +255,34 @@ export default function CounterPOSClient({
     });
   }, []);
 
-  // Remove item from cart
   const removeFromCart = useCallback((variantId: string) => {
     setCart(prev => prev.filter(item => item.variant_id !== variantId));
   }, []);
 
-  // Clear cart
   const clearCart = useCallback(() => {
     setCart([]);
     setTableNumber('');
     setCustomerName('');
     setCustomerPhone('');
     setPartySize(1);
+    setRecognizedCustomer(null);
+    setShowCustomerFields(false);
   }, []);
 
-  // Place order
   const placeOrder = async (paymentMethod: PaymentMethod, isPaid: boolean) => {
     if (cart.length === 0) {
       toast.error('Cart is empty');
       return;
     }
 
+    if (!shiftData?.has_open_shift) {
+      toast.error('Open a shift before placing orders', { duration: 4000 });
+      setShowOpenShiftModal(true);
+      return;
+    }
+
     setIsPlacingOrder(true);
-    
+
     try {
       const items = cart.map(item => ({
         variant_id: item.variant_id,
@@ -314,22 +305,21 @@ export default function CounterPOSClient({
       });
 
       if (error) throw error;
-      
+
       if (data?.success) {
         setLastOrder({
           orderNumber: data.order_number,
           tokenNumber: data.token_number,
           totalCents: data.total_cents,
         });
-        
-        // UF-6: Track customer if phone provided
+
         if (customerPhone) {
           const orderItems = cart.map(item => ({
             product_id: item.product_id,
             name: item.name,
             quantity: item.quantity,
           }));
-          
+
           await supabase.rpc('upsert_cafe_customer', {
             p_cafe_id: cafeId,
             p_phone: customerPhone,
@@ -337,16 +327,12 @@ export default function CounterPOSClient({
             p_order_total_cents: data.total_cents,
             p_order_items: orderItems,
           });
-          
-          // Refresh recent customers list
+
           fetchRecentCustomers();
         }
-        
-        // Refresh shift data to update cash totals
-        if (shiftData?.has_open_shift) {
-          fetchShiftStatus();
-        }
-        
+
+        fetchShiftStatus();
+
         toast.success(`Order placed! Token #${data.token_number}`, { duration: 3000 });
         clearCart();
         setShowPaymentModal(false);
@@ -361,165 +347,142 @@ export default function CounterPOSClient({
     }
   };
 
-  // Format price
-  const formatPrice = (cents: number) => {
-    return `Rs ${(cents / 100).toLocaleString('en-NP')}`;
-  };
+  const formatPrice = (cents: number) => `Rs ${(cents / 100).toLocaleString('en-NP')}`;
 
   const formatShiftTime = (isoString: string) => {
-    return new Date(isoString).toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    return new Date(isoString).toLocaleTimeString('en-US', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: true 
+      hour12: true
     });
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
-      {/* Shift Banner */}
-      {shiftData && (
-        <div className={`px-4 py-2 flex items-center justify-between shrink-0 ${
-          shiftData.has_open_shift 
-            ? 'bg-green-50 border-b border-green-200' 
-            : 'bg-amber-50 border-b border-amber-200'
-        }`}>
-          {shiftData.has_open_shift ? (
-            <>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium text-green-700">
-                    Shift Open: {formatShiftTime(shiftData.opened_at!)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-sm text-green-600">
-                  <DollarSign className="w-4 h-4" />
-                  <span>Cash: {formatPrice(shiftData.current_cash_cents || 0)}</span>
-                </div>
-                <div className="text-sm text-green-600">
-                  {shiftData.order_count} orders
-                </div>
-              </div>
-              <button
-                onClick={() => setShowCloseShiftModal(true)}
-                className="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Close Day
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-600" />
-                <span className="text-sm font-medium text-amber-700">
-                  No active shift — Start your shift to begin taking orders
-                </span>
-              </div>
-              <button
-                onClick={() => setShowOpenShiftModal(true)}
-                className="px-3 py-1.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors"
-              >
-                Start Shift
-              </button>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <UtensilsCrossed className="w-6 h-6 text-orange-600" />
-          <h1 className="text-xl font-bold text-gray-900">{cafeName}</h1>
-          <span className="text-sm text-gray-500">Counter POS</span>
-        </div>
+    <div className="h-screen flex flex-col bg-stone-100 overflow-hidden">
+      {/* ═══ TOP BAR: Back + Shift + Order Type ═══ */}
+      <header className="bg-white border-b border-stone-200 px-4 py-2 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
-          {/* Order Type Selector */}
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setOrderType('dine_in')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                orderType === 'dine_in' 
-                  ? 'bg-white shadow-sm text-orange-600' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <UtensilsCrossed className="w-4 h-4" />
-              Dine-in
-            </button>
-            <button
-              onClick={() => setOrderType('takeaway')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                orderType === 'takeaway' 
-                  ? 'bg-white shadow-sm text-orange-600' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Package className="w-4 h-4" />
-              Takeaway
-            </button>
-            <button
-              onClick={() => setOrderType('delivery')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                orderType === 'delivery' 
-                  ? 'bg-white shadow-sm text-orange-600' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Truck className="w-4 h-4" />
-              Delivery
-            </button>
+          <Link
+            href="/cafe/dashboard"
+            className="flex items-center gap-1.5 text-stone-500 hover:text-stone-700 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium hidden sm:inline">Dashboard</span>
+          </Link>
+          <div className="h-5 w-px bg-stone-200" />
+          <div className="flex items-center gap-2">
+            <UtensilsCrossed className="w-5 h-5 text-stone-700" />
+            <h1 className="text-lg font-bold text-stone-900">{cafeName}</h1>
           </div>
-          
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* Order Type Toggle */}
+          <div className="flex bg-stone-100 rounded-xl p-1">
+            {([
+              { type: 'dine_in' as const, label: 'Dine-in', icon: UtensilsCrossed },
+              { type: 'takeaway' as const, label: 'Takeaway', icon: Package },
+              { type: 'delivery' as const, label: 'Delivery', icon: Truck },
+            ]).map(({ type, label, icon: Icon }) => (
+              <button
+                key={type}
+                onClick={() => setOrderType(type)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  orderType === type
+                    ? 'bg-white shadow-sm text-stone-900'
+                    : 'text-stone-500 hover:text-stone-700'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
+          </div>
+
           {orderType === 'dine_in' && (
             <input
               type="text"
               placeholder="Table #"
               value={tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
-              className="w-20 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-20 px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-stone-400 focus:border-transparent"
             />
+          )}
+
+          {/* Shift Status */}
+          {shiftData && (
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-px bg-stone-200" />
+              {shiftData.has_open_shift ? (
+                <>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <span className="text-emerald-700 font-medium hidden md:inline">
+                      {formatShiftTime(shiftData.opened_at!)}
+                    </span>
+                    <span className="text-stone-500 hidden lg:inline">
+                      · {formatPrice(shiftData.current_cash_cents || 0)} · {shiftData.order_count} orders
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setShowCloseShiftModal(true)}
+                    className="px-3 py-1.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                  >
+                    Close Day
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span className="text-xs text-stone-400 hidden md:inline">No shift open</span>
+                  <button
+                    onClick={() => setShowOpenShiftModal(true)}
+                    className="px-3 py-1.5 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 transition-colors"
+                    title="Start tracking cash for today's shift. You'll count the cash at the end."
+                  >
+                    Open Today&apos;s Shift
+                  </button>
+                </>
+              )}
+            </div>
           )}
         </div>
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Menu Section */}
+        {/* ═══ MENU SECTION (Left) ═══ */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Search & Category Filter */}
-          <div className="bg-white border-b border-gray-200 p-4 space-y-3 shrink-0">
-            {/* Search */}
+          {/* Search & Categories */}
+          <div className="bg-white border-b border-stone-200 p-4 space-y-3 shrink-0">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
               <input
                 type="text"
-                placeholder="Search menu..."
+                placeholder="Search menu items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 border border-stone-300 rounded-xl focus:ring-2 focus:ring-stone-400 focus:border-transparent text-sm"
               />
             </div>
-            
-            {/* Categories */}
-            <div className="flex gap-2 overflow-x-auto pb-1">
+
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               <button
                 onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  !selectedCategory 
-                    ? 'bg-orange-600 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
+                  !selectedCategory
+                    ? 'bg-stone-900 text-white'
+                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                 }`}
               >
-                All
+                All Items
               </button>
               {activeCategories.map(cat => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    selectedCategory === cat.id 
-                      ? 'bg-orange-600 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedCategory === cat.id
+                      ? 'bg-stone-900 text-white'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                   }`}
                 >
                   {cat.name}
@@ -532,39 +495,36 @@ export default function CounterPOSClient({
           <div className="flex-1 overflow-y-auto p-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
               {filteredItems.map(item => (
-                <div key={item.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-                  {/* Item Image */}
+                <div key={item.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden hover:shadow-md hover:border-stone-300 transition-all">
                   {item.image_url && (
-                    <div className="aspect-square bg-gray-100 relative">
-                      <img 
-                        src={item.image_url} 
+                    <div className="aspect-[4/3] bg-stone-100 relative">
+                      <img
+                        src={item.image_url}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   )}
-                  
-                  {/* Item Info */}
+
                   <div className="p-3">
-                    <h3 className="font-semibold text-gray-900 text-sm line-clamp-1">{item.name}</h3>
-                    <p className="text-xs text-gray-500 mb-2">{item.category_name}</p>
-                    
-                    {/* Variants */}
+                    <h3 className="font-semibold text-stone-900 text-sm line-clamp-1">{item.name}</h3>
+                    <p className="text-xs text-stone-400 mb-2">{item.category_name}</p>
+
                     <div className="space-y-1.5">
                       {item.variants.map(variant => (
                         <button
                           key={variant.id}
                           onClick={() => addToCart(item, variant)}
-                          className="w-full flex items-center justify-between px-3 py-2 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors group"
+                          className="w-full flex items-center justify-between px-3 py-2.5 bg-stone-50 hover:bg-stone-100 rounded-lg transition-colors group min-h-[44px]"
                         >
-                          <span className="text-sm text-gray-700 truncate">
+                          <span className="text-sm text-stone-700 truncate">
                             {getVariantDisplayName(variant.sku)}
                           </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-orange-600">
+                            <span className="text-sm font-bold text-stone-900">
                               {formatPrice(variant.price_cents)}
                             </span>
-                            <Plus className="w-4 h-4 text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Plus className="w-4 h-4 text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
                         </button>
                       ))}
@@ -573,25 +533,26 @@ export default function CounterPOSClient({
                 </div>
               ))}
             </div>
-            
+
             {filteredItems.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+              <div className="flex flex-col items-center justify-center h-64 text-stone-400">
                 <Search className="w-12 h-12 mb-3 opacity-50" />
-                <p>No items found</p>
+                <p className="font-medium">No items found</p>
+                <p className="text-sm">Try a different search or category</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Cart Sidebar */}
-        <div className="w-96 bg-white border-l border-gray-200 flex flex-col shrink-0">
+        {/* ═══ CART SIDEBAR (Right) ═══ */}
+        <div className="w-96 bg-white border-l border-stone-200 flex flex-col shrink-0">
           {/* Cart Header */}
-          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          <div className="p-4 border-b border-stone-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-gray-700" />
-              <h2 className="font-semibold text-gray-900">Current Order</h2>
+              <ShoppingCart className="w-5 h-5 text-stone-700" />
+              <h2 className="font-bold text-stone-900">Current Order</h2>
               {totalItems > 0 && (
-                <span className="bg-orange-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="bg-stone-900 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {totalItems}
                 </span>
               )}
@@ -599,7 +560,7 @@ export default function CounterPOSClient({
             {cart.length > 0 && (
               <button
                 onClick={clearCart}
-                className="text-sm text-red-600 hover:text-red-700"
+                className="text-sm text-rose-600 hover:text-rose-700 font-medium"
               >
                 Clear
               </button>
@@ -609,48 +570,47 @@ export default function CounterPOSClient({
           {/* Cart Items */}
           <div className="flex-1 overflow-y-auto p-4">
             {cart.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                <ShoppingCart className="w-16 h-16 mb-3 opacity-50" />
-                <p className="text-sm">No items in cart</p>
+              <div className="flex flex-col items-center justify-center h-full text-stone-400">
+                <ShoppingCart className="w-16 h-16 mb-3 opacity-30" />
+                <p className="text-sm font-medium">No items in cart</p>
                 <p className="text-xs">Tap menu items to add</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {cart.map(item => (
-                  <div 
+                  <div
                     key={item.variant_id}
-                    className="flex items-center gap-3 bg-gray-50 rounded-lg p-3"
+                    className="flex items-center gap-3 bg-stone-50 rounded-xl p-3"
                   >
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-gray-900 text-sm truncate">
+                      <h4 className="font-medium text-stone-900 text-sm truncate">
                         {item.name}
                       </h4>
-                      <p className="text-xs text-gray-500">{getVariantDisplayName(item.variant_sku)}</p>
-                      <p className="text-sm font-semibold text-orange-600 mt-1">
+                      <p className="text-xs text-stone-500">{getVariantDisplayName(item.variant_sku)}</p>
+                      <p className="text-sm font-bold text-stone-900 mt-1">
                         {formatPrice(item.unit_price_cents * item.quantity)}
                       </p>
                     </div>
-                    
-                    {/* Quantity Controls */}
-                    <div className="flex items-center gap-2">
+
+                    <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => updateQuantity(item.variant_id, -1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
+                        className="w-9 h-9 flex items-center justify-center rounded-full bg-stone-200 hover:bg-stone-300 transition-colors"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                      <span className="w-8 text-center font-bold text-stone-900">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.variant_id, 1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-100 hover:bg-orange-200 text-orange-600 transition-colors"
+                        className="w-9 h-9 flex items-center justify-center rounded-full bg-stone-200 hover:bg-stone-300 text-stone-700 transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    
+
                     <button
                       onClick={() => removeFromCart(item.variant_id)}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                      className="p-2 text-stone-400 hover:text-rose-600 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -660,30 +620,29 @@ export default function CounterPOSClient({
             )}
           </div>
 
-          {/* Customer Info — Progressive Disclosure */}
+          {/* Customer Info */}
           {cart.length > 0 && (
-            <div className="border-t border-gray-200">
-              {/* Recognized Customer Banner (always visible when recognized) */}
+            <div className="border-t border-stone-200">
               {recognizedCustomer && (
-                <div className="bg-orange-50 border-b border-orange-200 px-4 py-2.5">
+                <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-2.5">
                   <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-orange-500" />
-                    <span className="text-sm font-medium text-orange-700">
-                      {recognizedCustomer.name || 'Regular Customer'} — {recognizedCustomer.total_visits} visits!
+                    <Star className="w-4 h-4 text-emerald-600" />
+                    <span className="text-sm font-medium text-emerald-700">
+                      {recognizedCustomer.name || 'Regular Customer'} — {recognizedCustomer.total_visits} visits
                     </span>
                   </div>
                   {recognizedCustomer.usual_items?.length > 0 && (
-                    <p className="text-xs text-orange-600 mt-0.5">
+                    <p className="text-xs text-emerald-600 mt-0.5">
                       Usual: {recognizedCustomer.usual_items.slice(0, 3).map(i => i.name).join(', ')}
                     </p>
                   )}
                 </div>
               )}
-              
+
               {!showCustomerFields && !recognizedCustomer ? (
                 <button
                   onClick={() => setShowCustomerFields(true)}
-                  className="w-full px-4 py-2.5 text-sm text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full px-4 py-3 text-sm text-stone-500 hover:text-stone-700 hover:bg-stone-50 transition-colors flex items-center justify-center gap-1.5 min-h-[44px]"
                 >
                   <User className="w-3.5 h-3.5" />
                   Add customer info
@@ -707,14 +666,14 @@ export default function CounterPOSClient({
                             setPhoneError('');
                           }
                         }}
-                        className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
-                          phoneError ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                        className={`w-full px-3 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-stone-400 focus:border-transparent ${
+                          phoneError ? 'border-rose-400 bg-rose-50' : 'border-stone-300'
                         }`}
                         autoFocus={showCustomerFields}
                         maxLength={10}
                       />
                       {phoneError && (
-                        <p className="text-xs text-red-500 px-1">{phoneError}</p>
+                        <p className="text-xs text-rose-500 px-1">{phoneError}</p>
                       )}
                     </div>
                     <input
@@ -722,12 +681,11 @@ export default function CounterPOSClient({
                       placeholder="Name"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="flex-1 px-3 py-2.5 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-stone-400 focus:border-transparent"
                     />
                   </div>
-                  {/* Recent Customers Quick Select */}
                   {!customerPhone && recentCustomers.length > 0 && (
-                    <div className="flex gap-1.5 overflow-x-auto pb-1">
+                    <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
                       {recentCustomers.slice(0, 4).map(c => (
                         <button
                           key={c.id}
@@ -735,7 +693,7 @@ export default function CounterPOSClient({
                             setCustomerPhone(c.phone);
                             setCustomerName(c.name || '');
                           }}
-                          className="px-2.5 py-1.5 bg-gray-100 hover:bg-orange-50 rounded-lg text-xs font-medium text-gray-700 whitespace-nowrap flex-shrink-0"
+                          className="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-700 whitespace-nowrap flex-shrink-0"
                         >
                           {c.name || c.phone}
                         </button>
@@ -749,7 +707,7 @@ export default function CounterPOSClient({
                       setCustomerPhone('');
                       setPhoneError('');
                     }}
-                    className="text-xs text-gray-400 hover:text-gray-600"
+                    className="text-xs text-stone-400 hover:text-stone-600"
                   >
                     Clear & hide
                   </button>
@@ -758,22 +716,20 @@ export default function CounterPOSClient({
             </div>
           )}
 
-          {/* Cart Footer - Total & Payment */}
-          <div className="p-4 border-t border-gray-200 space-y-3 bg-gray-50">
-            {/* Total */}
+          {/* Cart Footer */}
+          <div className="p-4 border-t border-stone-200 space-y-3 bg-stone-50">
             <div className="flex items-center justify-between">
-              <span className="text-lg font-semibold text-gray-900">Total</span>
-              <span className="text-2xl font-bold text-orange-600">
+              <span className="text-lg font-bold text-stone-900">Total</span>
+              <span className="text-2xl font-bold text-stone-900">
                 {formatPrice(subtotalCents)}
               </span>
             </div>
 
-            {/* Payment Buttons */}
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => placeOrder('cash', true)}
                 disabled={cart.length === 0 || isPlacingOrder}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-semibold rounded-xl transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-stone-300 text-white font-bold rounded-xl transition-colors min-h-[48px]"
               >
                 {isPlacingOrder ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -787,18 +743,17 @@ export default function CounterPOSClient({
               <button
                 onClick={() => setShowPaymentModal(true)}
                 disabled={cart.length === 0 || isPlacingOrder}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold rounded-xl transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-stone-300 text-white font-bold rounded-xl transition-colors min-h-[48px]"
               >
                 <Smartphone className="w-5 h-5" />
                 Digital
               </button>
             </div>
-            
-            {/* Pay Later Button */}
+
             <button
               onClick={() => placeOrder('cash', false)}
               disabled={cart.length === 0 || isPlacingOrder}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 text-white font-semibold rounded-xl transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-stone-700 hover:bg-stone-800 disabled:bg-stone-300 text-white font-bold rounded-xl transition-colors min-h-[48px]"
             >
               <Check className="w-5 h-5" />
               Send to Kitchen (Pay Later)
@@ -809,52 +764,52 @@ export default function CounterPOSClient({
 
       {/* Payment Modal */}
       {showPaymentModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 m-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl w-full max-w-md p-6 m-4 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Select Payment</h3>
-              <button 
+              <h3 className="text-xl font-bold text-stone-900">Select Payment</h3>
+              <button
                 onClick={() => setShowPaymentModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                className="p-2 hover:bg-stone-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="space-y-3">
               <button
                 onClick={() => placeOrder('esewa', true)}
                 disabled={isPlacingOrder}
-                className="w-full flex items-center gap-4 p-4 border-2 border-gray-200 hover:border-green-500 rounded-xl transition-colors"
+                className="w-full flex items-center gap-4 p-4 border-2 border-stone-200 hover:border-emerald-500 hover:bg-emerald-50 rounded-xl transition-all min-h-[64px]"
               >
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <Smartphone className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <Smartphone className="w-6 h-6 text-emerald-600" />
                 </div>
                 <div className="text-left">
-                  <div className="font-semibold text-gray-900">eSewa</div>
-                  <div className="text-sm text-gray-500">Digital wallet payment</div>
+                  <div className="font-bold text-stone-900">eSewa</div>
+                  <div className="text-sm text-stone-500">Digital wallet payment</div>
                 </div>
               </button>
-              
+
               <button
                 onClick={() => placeOrder('khalti', true)}
                 disabled={isPlacingOrder}
-                className="w-full flex items-center gap-4 p-4 border-2 border-gray-200 hover:border-purple-500 rounded-xl transition-colors"
+                className="w-full flex items-center gap-4 p-4 border-2 border-stone-200 hover:border-purple-500 hover:bg-purple-50 rounded-xl transition-all min-h-[64px]"
               >
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                   <CreditCard className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="text-left">
-                  <div className="font-semibold text-gray-900">Khalti</div>
-                  <div className="text-sm text-gray-500">Digital wallet payment</div>
+                  <div className="font-bold text-stone-900">Khalti</div>
+                  <div className="text-sm text-stone-500">Digital wallet payment</div>
                 </div>
               </button>
             </div>
-            
-            <div className="mt-6 pt-4 border-t border-gray-200">
+
+            <div className="mt-6 pt-4 border-t border-stone-200">
               <div className="flex items-center justify-between text-lg">
-                <span className="font-medium">Total to Pay</span>
-                <span className="font-bold text-orange-600">{formatPrice(subtotalCents)}</span>
+                <span className="font-medium text-stone-700">Total to Pay</span>
+                <span className="font-bold text-stone-900">{formatPrice(subtotalCents)}</span>
               </div>
             </div>
           </div>
@@ -863,7 +818,7 @@ export default function CounterPOSClient({
 
       {/* Order Success Toast */}
       {lastOrder && (
-        <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-2xl animate-in slide-in-from-right z-50">
+        <div className="fixed bottom-4 right-4 bg-emerald-600 text-white p-4 rounded-xl shadow-2xl z-50">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
               <Check className="w-6 h-6" />
@@ -873,7 +828,7 @@ export default function CounterPOSClient({
               <div className="text-sm opacity-90">{lastOrder.orderNumber}</div>
               <div className="text-sm opacity-90">{formatPrice(lastOrder.totalCents)}</div>
             </div>
-            <button 
+            <button
               onClick={() => setLastOrder(null)}
               className="ml-4 p-1 hover:bg-white/20 rounded"
             >
@@ -883,7 +838,7 @@ export default function CounterPOSClient({
         </div>
       )}
 
-      {/* Open Shift Modal */}
+      {/* Shift Modals */}
       <OpenShiftModal
         isOpen={showOpenShiftModal}
         onClose={() => setShowOpenShiftModal(false)}
@@ -894,7 +849,6 @@ export default function CounterPOSClient({
         cafeId={cafeId}
       />
 
-      {/* Close Shift Modal */}
       {shiftData?.has_open_shift && shiftData.shift_id && (
         <CloseShiftModal
           isOpen={showCloseShiftModal}

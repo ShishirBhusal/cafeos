@@ -1,10 +1,8 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import Link from 'next/link';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 import ExpensesClient from '@/components/cafe/ExpensesClient';
-import { ArrowLeft } from 'lucide-react';
 import { getNepaliDateString } from '@/lib/nepalTime';
 
 export const dynamic = 'force-dynamic';
@@ -36,14 +34,7 @@ async function createClient() {
 
 export default async function CafeExpensesPage() {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/expenses');
-  }
-  
-  if (!user.capabilities.canAccessCafeDashboard) {
-    redirect('/');
-  }
+  if (!user) return null;
 
   const supabase = await createClient();
   
@@ -79,28 +70,13 @@ export default async function CafeExpensesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 px-4 py-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link href="/cafe/dashboard" className="p-2 hover:bg-stone-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-stone-900">Daily Expenses</h1>
-              <p className="text-sm text-stone-500">{cafeProfile?.business_name}</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <ExpensesClient 
+    <CafePageLayout title="Kharcha" description="Track daily expenses">
+      <ExpensesClient
         cafeId={cafeId}
         initialExpenses={expenses || []}
         totalExpensesCents={totalExpensesCents}
         profitData={profitData || undefined}
       />
-    </div>
+    </CafePageLayout>
   );
 }

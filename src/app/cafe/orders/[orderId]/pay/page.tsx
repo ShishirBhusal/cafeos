@@ -114,7 +114,7 @@ export default function MarkOrderPaidPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-stone-600" />
       </div>
     );
   }
@@ -126,7 +126,7 @@ export default function MarkOrderPaidPage() {
           <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h1>
           <p className="text-gray-600 mb-6">{error || 'This order does not exist'}</p>
-          <Link href="/cafe/orders" className="text-orange-600 hover:underline">
+          <Link href="/cafe/orders" className="text-stone-600 hover:underline">
             ← Back to Orders
           </Link>
         </div>
@@ -141,7 +141,7 @@ export default function MarkOrderPaidPage() {
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Already Paid</h1>
           <p className="text-gray-600 mb-6">This order has already been marked as paid</p>
-          <Link href="/cafe/orders" className="text-orange-600 hover:underline">
+          <Link href="/cafe/orders" className="text-stone-600 hover:underline">
             ← Back to Orders
           </Link>
         </div>
@@ -186,11 +186,11 @@ export default function MarkOrderPaidPage() {
 
       <main className="max-w-lg mx-auto p-6">
         {/* Order Summary */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
+        <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               {tokenNumber && (
-                <span className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-bold mb-2">
+                <span className="inline-flex items-center px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm font-bold mb-2">
                   Token #{tokenNumber}
                 </span>
               )}
@@ -217,22 +217,22 @@ export default function MarkOrderPaidPage() {
         </div>
 
         {/* Payment Method */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
+        <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
           <h2 className="font-semibold text-gray-900 mb-4">Payment Method</h2>
           <div className="grid grid-cols-3 gap-3">
             <button
               onClick={() => setPaymentMethod('cash')}
               className={`p-4 rounded-xl border-2 transition-colors ${
                 paymentMethod === 'cash'
-                  ? 'border-orange-500 bg-orange-50'
+                  ? 'border-stone-500 bg-stone-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <Banknote className={`w-6 h-6 mx-auto mb-2 ${
-                paymentMethod === 'cash' ? 'text-orange-600' : 'text-gray-400'
+                paymentMethod === 'cash' ? 'text-stone-600' : 'text-gray-400'
               }`} />
               <span className={`text-sm font-medium ${
-                paymentMethod === 'cash' ? 'text-orange-700' : 'text-gray-600'
+                paymentMethod === 'cash' ? 'text-stone-700' : 'text-gray-600'
               }`}>Cash</span>
             </button>
             
@@ -240,15 +240,15 @@ export default function MarkOrderPaidPage() {
               onClick={() => setPaymentMethod('card')}
               className={`p-4 rounded-xl border-2 transition-colors ${
                 paymentMethod === 'card'
-                  ? 'border-orange-500 bg-orange-50'
+                  ? 'border-stone-500 bg-stone-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <CreditCard className={`w-6 h-6 mx-auto mb-2 ${
-                paymentMethod === 'card' ? 'text-orange-600' : 'text-gray-400'
+                paymentMethod === 'card' ? 'text-stone-600' : 'text-gray-400'
               }`} />
               <span className={`text-sm font-medium ${
-                paymentMethod === 'card' ? 'text-orange-700' : 'text-gray-600'
+                paymentMethod === 'card' ? 'text-stone-700' : 'text-gray-600'
               }`}>Card</span>
             </button>
             
@@ -256,15 +256,15 @@ export default function MarkOrderPaidPage() {
               onClick={() => setPaymentMethod('esewa')}
               className={`p-4 rounded-xl border-2 transition-colors ${
                 paymentMethod === 'esewa'
-                  ? 'border-orange-500 bg-orange-50'
+                  ? 'border-stone-500 bg-stone-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <Smartphone className={`w-6 h-6 mx-auto mb-2 ${
-                paymentMethod === 'esewa' ? 'text-orange-600' : 'text-gray-400'
+                paymentMethod === 'esewa' ? 'text-stone-600' : 'text-gray-400'
               }`} />
               <span className={`text-sm font-medium ${
-                paymentMethod === 'esewa' ? 'text-orange-700' : 'text-gray-600'
+                paymentMethod === 'esewa' ? 'text-stone-700' : 'text-gray-600'
               }`}>eSewa</span>
             </button>
           </div>

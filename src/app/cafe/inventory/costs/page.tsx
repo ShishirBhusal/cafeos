@@ -171,7 +171,7 @@ export default async function FoodCostsPage() {
               <span><strong>Stars</strong>: High margin (≥60%) - Promote these!</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-orange-500" />
+              <Zap className="w-4 h-4 text-stone-500" />
               <span><strong>Workhorses</strong>: Medium margin (40-60%)</span>
             </div>
             <div className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export default async function FoodCostsPage() {
         {/* Stars */}
         {stars.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b bg-gradient-to-r from-yellow-400 to-amber-400 text-white">
+            <div className="px-4 py-3 border-b bg-stone-900 text-white">
               <h2 className="font-bold flex items-center gap-2">
                 <Star className="w-5 h-5" />
                 Stars - Your Money Makers ({stars.length})
@@ -279,7 +279,7 @@ export default async function FoodCostsPage() {
               </div>
               <Link
                 href="/cafe/inventory/recipes"
-                className="mt-4 inline-block px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                className="mt-4 inline-block px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800"
               >
                 Set Up Recipes →
               </Link>

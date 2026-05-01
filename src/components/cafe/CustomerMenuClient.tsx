@@ -214,8 +214,8 @@ export default function CustomerMenuClient({
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Placed!</h1>
           <p className="text-gray-600 mb-6">Your order has been sent to the kitchen</p>
           
-          <div className="bg-gray-100 rounded-2xl p-6 mb-6">
-            <div className="text-6xl font-bold text-orange-600 mb-2">
+          <div className="bg-gray-100 rounded-xl p-6 mb-6">
+            <div className="text-6xl font-bold text-stone-900 mb-2">
               #{orderSuccess.tokenNumber}
             </div>
             <div className="text-sm text-gray-500">Your Token Number</div>
@@ -252,7 +252,7 @@ export default function CustomerMenuClient({
                 setCustomerName('');
                 setCustomerPhone('');
               }}
-              className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-colors"
+              className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white font-semibold rounded-xl transition-colors"
             >
               Order More
             </button>
@@ -269,11 +269,11 @@ export default function CustomerMenuClient({
         <div className="px-4 py-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <UtensilsCrossed className="w-6 h-6 text-orange-600" />
+              <UtensilsCrossed className="w-6 h-6 text-stone-600" />
               <h1 className="text-xl font-bold text-gray-900">{cafeName}</h1>
             </div>
             {tableNumber && (
-              <span className="px-3 py-1 bg-orange-100 text-orange-600 text-sm font-medium rounded-full">
+              <span className="px-3 py-1 bg-stone-100 text-stone-700 text-sm font-medium rounded-full">
                 Table {tableNumber}
               </span>
             )}
@@ -287,7 +287,7 @@ export default function CustomerMenuClient({
               placeholder="Search menu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-100 border-0 rounded-xl focus:ring-2 focus:ring-orange-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-100 border-0 rounded-xl focus:ring-2 focus:ring-stone-500"
             />
           </div>
         </div>
@@ -298,7 +298,7 @@ export default function CustomerMenuClient({
             onClick={() => setSelectedCategory(null)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               !selectedCategory 
-                ? 'bg-orange-600 text-white' 
+                ? 'bg-stone-900 text-white'
                 : 'bg-gray-100 text-gray-700'
             }`}
           >
@@ -309,8 +309,8 @@ export default function CustomerMenuClient({
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                selectedCategory === cat.id 
-                  ? 'bg-orange-600 text-white' 
+                selectedCategory === cat.id
+                  ? 'bg-stone-900 text-white'
                   : 'bg-gray-100 text-gray-700'
               }`}
             >
@@ -351,15 +351,15 @@ export default function CustomerMenuClient({
                           <button
                             key={variant.id}
                             onClick={() => addToCart(item, variant)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors"
+                            className="flex items-center gap-2 px-3 py-1.5 bg-stone-50 hover:bg-stone-100 rounded-lg transition-colors"
                           >
                             <span className="text-sm text-gray-700">
                               {getVariantDisplayName(variant.sku)}
                             </span>
-                            <span className="text-sm font-semibold text-orange-600">
+                            <span className="text-sm font-semibold text-stone-700">
                               {formatPrice(variant.price_cents)}
                             </span>
-                            <Plus className="w-4 h-4 text-orange-600" />
+                            <Plus className="w-4 h-4 text-stone-700" />
                           </button>
                         ))}
                       </div>
@@ -383,12 +383,12 @@ export default function CustomerMenuClient({
       {totalItems > 0 && !showCart && (
         <button
           onClick={() => setShowCart(true)}
-          className="fixed bottom-4 left-4 right-4 bg-orange-600 hover:bg-orange-700 text-white py-4 px-6 rounded-2xl flex items-center justify-between shadow-lg z-50"
+          className="fixed bottom-4 left-4 right-4 bg-stone-900 hover:bg-stone-800 text-white py-4 px-6 rounded-xl flex items-center justify-between shadow-lg z-50"
         >
           <div className="flex items-center gap-3">
             <div className="relative">
               <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-2 -right-2 w-5 h-5 bg-white text-orange-600 text-xs font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-white text-stone-900 text-xs font-bold rounded-full flex items-center justify-center">
                 {totalItems}
               </span>
             </div>
@@ -423,7 +423,7 @@ export default function CustomerMenuClient({
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-900">{item.name}</h4>
                     <p className="text-sm text-gray-500">{getVariantDisplayName(item.variant_sku)}</p>
-                    <p className="text-sm font-semibold text-orange-600 mt-1">
+                    <p className="text-sm font-semibold text-stone-700 mt-1">
                       {formatPrice(item.unit_price_cents * item.quantity)}
                     </p>
                   </div>
@@ -438,7 +438,7 @@ export default function CustomerMenuClient({
                     <span className="w-8 text-center font-semibold">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.variant_id, 1)}
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-100 text-orange-600"
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 text-stone-700"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -461,14 +461,14 @@ export default function CustomerMenuClient({
                 placeholder="Your name (optional)"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-stone-500"
               />
               <input
                 type="tel"
                 placeholder="Phone number (optional)"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-stone-500"
               />
             </div>
             
@@ -476,7 +476,7 @@ export default function CustomerMenuClient({
             <div className="p-4 border-t border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-lg font-semibold">Total</span>
-                <span className="text-2xl font-bold text-orange-600">
+                <span className="text-2xl font-bold text-stone-700">
                   {formatPrice(subtotalCents)}
                 </span>
               </div>
@@ -484,7 +484,7 @@ export default function CustomerMenuClient({
               <button
                 onClick={placeOrder}
                 disabled={isPlacingOrder || cart.length === 0}
-                className="w-full py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 text-white font-bold rounded-xl flex items-center justify-center gap-2"
+                className="w-full py-4 bg-stone-900 hover:bg-stone-800 disabled:bg-gray-300 text-white font-bold rounded-xl flex items-center justify-center gap-2"
               >
                 {isPlacingOrder ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

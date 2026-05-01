@@ -78,10 +78,10 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
 
   if (compact) {
     return (
-      <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl border border-orange-200 p-5">
+      <div className="bg-gradient-to-br from-stone-50 to-stone-50 rounded-xl border border-stone-200 p-5">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-orange-600" />
+            <BookOpen className="w-5 h-5 text-stone-600" />
             <h3 className="font-bold text-gray-900">Aaja Ko Katha</h3>
           </div>
           <span className="text-xs text-gray-500">{story.day_name_np}</span>
@@ -97,7 +97,7 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
             <p className="text-xs text-gray-500">Revenue</p>
           </div>
           <div className="text-center">
-            <p className={`text-2xl font-bold ${profitIsPositive ? 'text-orange-600' : 'text-red-600'}`}>
+            <p className={`text-2xl font-bold ${profitIsPositive ? 'text-stone-700' : 'text-red-600'}`}>
               {formatRs(story.net_profit_cents)}
             </p>
             <p className="text-xs text-gray-500">Profit</p>
@@ -105,13 +105,13 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
         </div>
 
         {story.unpaid_count > 0 && (
-          <p className="text-sm text-amber-700">
-            <AlertTriangle className="w-3.5 h-3.5 inline text-amber-500" /> {story.unpaid_count} unpaid ({formatRs(story.unpaid_cents || 0)})
+          <p className="text-sm text-stone-700">
+            <AlertTriangle className="w-3.5 h-3.5 inline text-stone-400" /> {story.unpaid_count} unpaid ({formatRs(story.unpaid_cents || 0)})
           </p>
         )}
         {story.top_item && (
           <p className="text-sm text-gray-600">
-            <Star className="w-3.5 h-3.5 inline text-amber-500" /> Top: <strong>{story.top_item.name}</strong> ({story.top_item.quantity} sold)
+            <Star className="w-3.5 h-3.5 inline text-stone-400" /> Top: <strong>{story.top_item.name}</strong> ({story.top_item.quantity} sold)
           </p>
         )}
       </div>
@@ -119,20 +119,20 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-amber-600 to-orange-500 px-5 py-4 text-white">
+      <div className="bg-gradient-to-r from-stone-800 to-stone-600 px-5 py-4 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BookOpen className="w-6 h-6" />
             <div>
               <h2 className="text-lg font-bold">Aaja Ko Katha</h2>
-              <p className="text-sm text-amber-100">{cafeName}</p>
+              <p className="text-sm text-stone-300">{cafeName}</p>
             </div>
           </div>
           <div className="text-right">
             <p className="font-bold">{story.day_name_np}</p>
-            <p className="text-sm text-amber-100">{new Date(story.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+            <p className="text-sm text-stone-300">{new Date(story.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
           </div>
         </div>
       </div>
@@ -153,8 +153,8 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
             <p className="text-2xl font-bold text-emerald-700 tabular-nums">{formatRs(story.total_revenue_cents)}</p>
             <p className="text-xs text-stone-500 mt-1">Revenue</p>
           </div>
-          <div className={`${profitIsPositive ? 'bg-amber-50' : 'bg-rose-50'} rounded-xl p-3 text-center`}>
-            <p className={`text-2xl font-bold tabular-nums ${profitIsPositive ? 'text-amber-700' : 'text-rose-600'}`}>
+          <div className={`${profitIsPositive ? 'bg-stone-50' : 'bg-rose-50'} rounded-xl p-3 text-center`}>
+            <p className={`text-2xl font-bold tabular-nums ${profitIsPositive ? 'text-stone-700' : 'text-rose-600'}`}>
               {formatRs(story.net_profit_cents)}
             </p>
             <p className="text-xs text-stone-500 mt-1">Net Profit</p>
@@ -165,8 +165,8 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
         <div className="grid grid-cols-2 gap-3">
           {/* Top Item */}
           {story.top_item && (
-            <div className="flex items-center gap-3 bg-amber-50 rounded-xl p-3">
-              <Award className="w-8 h-8 text-amber-600 shrink-0" />
+            <div className="flex items-center gap-3 bg-stone-50 rounded-xl p-3">
+              <Award className="w-8 h-8 text-stone-500 shrink-0" />
               <div>
                 <p className="text-sm font-bold text-stone-900">{story.top_item.name}</p>
                 <p className="text-xs text-stone-500">{story.top_item.quantity} sold • {formatRs(story.top_item.revenue_cents)}</p>
@@ -268,7 +268,7 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
             <hr className="border-stone-300 my-1" />
             <div className="flex justify-between font-bold">
               <span className="text-stone-900">नाफा (Net Profit)</span>
-              <span className={`tabular-nums ${profitIsPositive ? 'text-amber-700' : 'text-rose-600'}`}>
+              <span className={`tabular-nums ${profitIsPositive ? 'text-stone-700' : 'text-rose-600'}`}>
                 {formatRs(story.net_profit_cents)}
               </span>
             </div>
@@ -280,7 +280,7 @@ export default function DailyStoryCard({ story, cafeName, onPrevDay, onNextDay, 
           <div className="space-y-2">
             <h4 className="font-semibold text-stone-700 text-sm">Katha ka Kura</h4>
             {story.insights.map((insight, i) => (
-              <p key={i} className="text-sm text-stone-700 bg-amber-50 rounded-xl px-4 py-3 border border-amber-100">
+              <p key={i} className="text-sm text-stone-700 bg-stone-50 rounded-xl px-4 py-3 border border-stone-200">
                 {insight}
               </p>
             ))}

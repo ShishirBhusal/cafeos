@@ -1,16 +1,14 @@
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { getNepaliDateDaysAgo, nepalDateToUTCRange, formatToNepalTime } from '@/lib/nepalTime';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Clock, 
-  DollarSign, 
-  TrendingUp, 
+import { getCurrentUser } from '@/lib/auth';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
+import { getNepaliDateDaysAgo, nepalDateToUTCRange } from '@/lib/nepalTime';
+import {
+  Calendar,
+  Clock,
+  TrendingUp,
   TrendingDown,
   AlertTriangle,
-  CheckCircle2 
+  CheckCircle2
 } from 'lucide-react';
 
 interface Shift {
@@ -28,19 +26,19 @@ interface Shift {
 }
 
 export default async function ShiftHistoryPage() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
   const supabase = await createClient();
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
-  
+
   // Fetch cafe info
   const { data: cafe } = await supabase
     .from('vendor_profiles')
     .select('user_id, business_name')
     .eq('user_id', user.id)
     .single();
-    
-  if (!cafe) redirect('/');
+
+  if (!cafe) return null;
   
   // Fetch shift history (last 30 days) using Nepal timezone
   const thirtyDaysAgoNepal = getNepaliDateDaysAgo(30);
@@ -79,39 +77,26 @@ export default async function ShiftHistoryPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/cafe/dashboard" className="p-2 hover:bg-stone-100 rounded-lg">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-xl font-bold text-stone-900">Din Ko Hisab</h1>
-            <p className="text-sm text-stone-500">Shift History — Last 30 days</p>
-          </div>
-        </div>
-      </header>
-      
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+    <CafePageLayout title="Shift History" description="Track cash and shift performance">
+      <div className="space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Total Shifts</div>
             <div className="text-2xl font-bold text-stone-900 tabular-nums">{closedShifts.length}</div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Perfect Matches</div>
             <div className="text-2xl font-bold text-emerald-600 tabular-nums">{perfectShifts}</div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Short Shifts</div>
             <div className="text-2xl font-bold text-rose-600 tabular-nums">{shortShifts}</div>
           </div>
           
-          <div className={`bg-white rounded-2xl p-4 border ${
+          <div className={`bg-white rounded-xl p-4 border ${
             totalVariance >= 0 ? 'border-emerald-200' : 'border-rose-200'
           }`}>
             <div className="text-sm text-stone-500 mb-1">Net Variance</div>
@@ -152,7 +137,7 @@ export default async function ShiftHistoryPage() {
           const isImproving = recentAvg > earlyAvg;
           
           return (
-            <div className="bg-white rounded-2xl border border-stone-200 p-5">
+            <div className="bg-white rounded-xl border border-stone-200 p-5">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <h2 className="font-bold text-stone-900">Variance Trend</h2>
@@ -214,7 +199,7 @@ export default async function ShiftHistoryPage() {
         })()}
         
         {/* Shift List */}
-        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           <div className="px-5 py-3 border-b border-stone-200 bg-stone-50">
             <h2 className="font-bold text-stone-900">Shift Records</h2>
           </div>
@@ -223,7 +208,15 @@ export default async function ShiftHistoryPage() {
             <div className="p-10 text-center">
               <Clock className="w-12 h-12 mx-auto mb-3 text-stone-300" />
               <p className="font-medium text-stone-600">No shifts recorded yet</p>
-              <p className="text-sm text-stone-400 mt-1">Open your first shift from the Counter POS</p>
+              <p className="text-sm text-stone-400 mt-1 mb-4">
+                Shifts track your cash flow. Open a shift when you start your day, close it when you&apos;re done — CafeOS will tell you if the cash matches.
+              </p>
+              <a
+                href="/cafe/counter"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 transition-colors"
+              >
+                Open Counter to start a shift
+              </a>
             </div>
           ) : (
             <div className="divide-y divide-stone-100">
@@ -297,18 +290,18 @@ export default async function ShiftHistoryPage() {
         
         {/* Variance Trend Warning */}
         {shortShifts >= 3 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-stone-500 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-medium text-amber-800">Cash Shortage Pattern Detected</h3>
-              <p className="text-sm text-amber-700 mt-1">
+              <h3 className="font-medium text-stone-800">Cash Shortage Pattern Detected</h3>
+              <p className="text-sm text-stone-700 mt-1">
                 {shortShifts} shifts in the last 30 days had cash shortages. 
                 Cash handling review garna birsanu bhayena?
               </p>
             </div>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </CafePageLayout>
   );
 }

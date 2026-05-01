@@ -108,10 +108,10 @@ export default async function CustomerDetailPage({ params }: PageProps) {
       
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Customer Profile Card */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-6">
+        <div className="bg-white rounded-xl border border-stone-200 p-6">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center">
-              <User className="w-8 h-8 text-amber-600" />
+            <div className="w-16 h-16 bg-stone-100 rounded-xl flex items-center justify-center">
+              <User className="w-8 h-8 text-stone-500" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                   {customer.name || 'Unknown Customer'}
                 </h2>
                 {customer.total_visits >= 10 && (
-                  <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                  <Star className="w-5 h-5 text-stone-400 fill-stone-400" />
                 )}
               </div>
               <div className="flex items-center gap-1 text-stone-500 mt-1">
@@ -144,19 +144,19 @@ export default async function CustomerDetailPage({ params }: PageProps) {
         
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Total Visits</div>
-            <div className="text-2xl font-bold text-amber-600 tabular-nums">{customer.total_visits}</div>
+            <div className="text-2xl font-bold text-stone-500 tabular-nums">{customer.total_visits}</div>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Total Spent</div>
             <div className="text-xl font-bold text-stone-900 tabular-nums">{formatRs(customer.total_spent_cents)}</div>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Avg Order</div>
             <div className="text-xl font-bold text-stone-900 tabular-nums">{formatRs(avgOrderValue)}</div>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="text-sm text-stone-500 mb-1">Points</div>
             <div className="text-2xl font-bold text-emerald-600 tabular-nums">{customer.loyalty_points || 0}</div>
           </div>
@@ -164,14 +164,14 @@ export default async function CustomerDetailPage({ params }: PageProps) {
         
         {/* Usual Items */}
         {customer.usual_items && customer.usual_items.length > 0 && (
-          <div className="bg-amber-50 rounded-2xl border border-amber-200 p-4">
-            <h3 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+          <div className="bg-stone-50 rounded-xl border border-stone-200 p-4">
+            <h3 className="font-semibold text-stone-800 mb-2 flex items-center gap-2">
               <Star className="w-4 h-4" />
               Usual Orders
             </h3>
             <div className="flex flex-wrap gap-2">
               {customer.usual_items.slice(0, 5).map((item: any, i: number) => (
-                <span key={i} className="px-3 py-1 bg-white rounded-full text-sm text-amber-700 border border-amber-200">
+                <span key={i} className="px-3 py-1 bg-white rounded-full text-sm text-stone-700 border border-stone-200">
                   {item.name} ({item.count}x)
                 </span>
               ))}
@@ -181,7 +181,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
         
         {/* Rewards */}
         {rewards && rewards.length > 0 && (
-          <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+          <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
             <div className="px-5 py-3 border-b border-stone-200 bg-stone-50">
               <h3 className="font-bold text-stone-900 flex items-center gap-2">
                 <Gift className="w-4 h-4 text-purple-600" />
@@ -211,7 +211,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
         )}
         
         {/* Order History */}
-        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           <div className="px-5 py-3 border-b border-stone-200 bg-stone-50">
             <h3 className="font-bold text-stone-900 flex items-center gap-2">
               <Receipt className="w-4 h-4" />
@@ -243,7 +243,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       order.payment_status === 'paid' 
                         ? 'bg-emerald-100 text-emerald-700' 
-                        : 'bg-amber-100 text-amber-700'
+                        : 'bg-stone-100 text-stone-700'
                     }`}>
                       {order.payment_status}
                     </span>

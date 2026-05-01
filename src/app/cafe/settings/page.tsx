@@ -1,17 +1,16 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
+import CafePageLayout from '@/components/cafe/CafePageLayout';
+import {
+  ArrowLeft,
   Store,
   Clock,
   QrCode,
   Bell,
   CreditCard,
   Printer,
-  Globe,
   Wallet
 } from 'lucide-react';
 
@@ -44,14 +43,7 @@ async function createClient() {
 
 export default async function CafeSettingsPage() {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/settings');
-  }
-  
-  if (!user.capabilities.canAccessCafeDashboard) {
-    redirect('/');
-  }
+  if (!user) return null;
 
   const supabase = await createClient();
   
@@ -119,41 +111,26 @@ export default async function CafeSettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link href="/cafe/dashboard" className="p-2 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Settings</h1>
-              <p className="text-sm text-gray-500">{cafeProfile?.business_name}</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-2xl mx-auto p-4 space-y-4">
+    <CafePageLayout title="Settings" description="Cafe settings">
+      <div className="space-y-4">
         {/* QR Code Quick Access */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-6 text-white">
+        <div className="bg-stone-900 rounded-xl p-6 text-white">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-white/20 rounded-xl">
               <QrCode className="w-8 h-8" />
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-lg">Customer Ordering URL</h3>
-              <p className="text-orange-100 text-sm break-all">{qrOrderUrl}</p>
+              <p className="text-stone-300 text-sm break-all">{qrOrderUrl}</p>
             </div>
           </div>
-          <p className="mt-4 text-sm text-orange-100">
+          <p className="mt-4 text-sm text-stone-300">
             Share this link or print QR codes for customers to order from their phones
           </p>
         </div>
 
         {/* Settings List */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           {settingsSections.map((section, index) => (
             <div key={section.title}>
               {section.status === 'available' ? (
@@ -196,7 +173,7 @@ export default async function CafeSettingsPage() {
           <p>CafeOS v1.0</p>
           <p className="text-xs mt-1">Built with ❤️ for Nepali cafes</p>
         </div>
-      </main>
-    </div>
+      </div>
+    </CafePageLayout>
   );
 }

@@ -44,7 +44,7 @@ export default function CafeQRCode({ cafeUrl, cafeName }: CafeQRCodeProps) {
       {/* QR Code Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">QR Code</h3>
               <button
@@ -72,7 +72,7 @@ export default function CafeQRCode({ cafeUrl, cafeName }: CafeQRCodeProps) {
             {/* Download Button */}
             <button
               onClick={downloadQR}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-medium transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-medium transition-colors"
             >
               <Download className="w-5 h-5" />
               Download QR Code

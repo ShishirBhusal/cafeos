@@ -54,20 +54,25 @@ export default function OpenShiftModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+      <div className="bg-white rounded-xl w-full max-w-md shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-bold text-gray-900">Start Your Shift</h2>
+          <h2 className="text-xl font-bold text-stone-900">Open Today&apos;s Shift</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
+          {/* Explanation */}
+          <p className="text-sm text-stone-500">
+            A shift tracks all cash transactions until you close it. At the end, you&apos;ll count your cash and CafeOS will check if it matches.
+          </p>
+
           {/* Time Info */}
-          <div className="bg-orange-50 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-              <Clock className="w-5 h-5 text-orange-600" />
+          <div className="bg-stone-50 rounded-xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-stone-100 rounded-full flex items-center justify-center">
+              <Clock className="w-5 h-5 text-stone-600" />
             </div>
             <div>
               <p className="text-sm text-gray-600">Starting at</p>
@@ -94,7 +99,7 @@ export default function OpenShiftModal({
                 value={openingFloat}
                 onChange={(e) => setOpeningFloat(e.target.value)}
                 placeholder="0"
-                className="w-full pl-12 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-0"
+                className="w-full pl-12 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-stone-500 focus:ring-0"
                 min="0"
               />
             </div>
@@ -114,7 +119,7 @@ export default function OpenShiftModal({
             <button
               onClick={handleOpenShift}
               disabled={isOpening}
-              className="flex-1 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-stone-900 text-white rounded-xl font-semibold hover:bg-stone-800 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isOpening ? (
                 <>

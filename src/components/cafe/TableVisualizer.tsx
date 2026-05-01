@@ -49,7 +49,7 @@ interface TableVisualizerProps {
 
 const TABLE_COLORS = {
   available: 'bg-emerald-100 border-emerald-300 text-emerald-700',
-  occupied: 'bg-amber-100 border-amber-300 text-amber-700',
+  occupied: 'bg-stone-100 border-stone-300 text-stone-700',
   reserved: 'bg-blue-100 border-blue-300 text-blue-700',
   cleaning: 'bg-stone-100 border-stone-300 text-stone-500',
 };
@@ -233,7 +233,7 @@ export default function TableVisualizer({
 
   const getKitchenStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-amber-500';
+      case 'pending': return 'bg-stone-500';
       case 'preparing': return 'bg-blue-500 animate-pulse';
       case 'ready': return 'bg-emerald-500';
       default: return 'bg-stone-400';
@@ -241,7 +241,7 @@ export default function TableVisualizer({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -250,7 +250,7 @@ export default function TableVisualizer({
             <span className="flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full">
               <CheckCircle className="w-3 h-3" /> {stats.available} free
             </span>
-            <span className="flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-700 rounded-full">
+            <span className="flex items-center gap-1 px-2 py-1 bg-stone-100 text-stone-700 rounded-full">
               <Users className="w-3 h-3" /> {stats.occupied} occupied
             </span>
             {stats.unpaidAmount > 0 && (
@@ -264,7 +264,7 @@ export default function TableVisualizer({
           <button
             onClick={() => setIsEditing(!isEditing)}
             className={`p-2 rounded-lg transition-colors ${
-              isEditing ? 'bg-amber-100 text-amber-700' : 'hover:bg-stone-100'
+              isEditing ? 'bg-stone-100 text-stone-700' : 'hover:bg-stone-100'
             }`}
             title={isEditing ? 'Exit edit mode' : 'Edit layout'}
           >
@@ -337,7 +337,7 @@ export default function TableVisualizer({
                   
                   {/* Unpaid indicator */}
                   {table.current_order?.payment_status === 'unpaid' && (
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded">
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-stone-500 text-white text-[10px] font-bold rounded">
                       {formatRs(table.current_order.total_cents)}
                     </div>
                   )}
@@ -354,7 +354,7 @@ export default function TableVisualizer({
                 <p className="text-stone-500 font-medium">No tables yet</p>
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="mt-2 px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600"
+                  className="mt-2 px-4 py-2 bg-stone-500 text-white rounded-lg text-sm font-medium hover:bg-stone-800"
                 >
                   Add First Table
                 </button>
@@ -366,7 +366,7 @@ export default function TableVisualizer({
 
       {/* Edit mode hint */}
       {isEditing && (
-        <div className="px-4 py-2 bg-amber-50 border-t border-amber-200 text-center text-sm text-amber-700">
+        <div className="px-4 py-2 bg-stone-50 border-t border-stone-200 text-center text-sm text-stone-700">
           <Settings className="w-4 h-4 inline mr-1" />
           Edit mode: Drag tables to rearrange • Click <strong>Settings</strong> to exit
         </div>
@@ -375,7 +375,7 @@ export default function TableVisualizer({
       {/* Table Detail Modal */}
       {selectedTable && !isEditing && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-sm">
+          <div className="bg-white rounded-xl w-full max-w-sm">
             <div className="p-4 border-b flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-12 h-12 ${
@@ -401,7 +401,7 @@ export default function TableVisualizer({
                     <span className="text-sm text-stone-500">Current Order</span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       selectedTable.current_order.payment_status === 'unpaid'
-                        ? 'bg-amber-100 text-amber-700'
+                        ? 'bg-stone-100 text-stone-700'
                         : 'bg-emerald-100 text-emerald-700'
                     }`}>
                       {selectedTable.current_order.payment_status}
@@ -450,7 +450,7 @@ export default function TableVisualizer({
 
               {/* Quick Actions */}
               <div className="flex gap-2">
-                <button className="flex-1 px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium transition-colors">
+                <button className="flex-1 px-4 py-3 bg-stone-500 hover:bg-stone-800 text-white rounded-xl font-medium transition-colors">
                   New Order
                 </button>
                 {selectedTable.current_order?.payment_status === 'unpaid' && (
@@ -467,7 +467,7 @@ export default function TableVisualizer({
       {/* Add Table Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-sm">
+          <div className="bg-white rounded-xl w-full max-w-sm">
             <div className="p-4 border-b flex items-center justify-between">
               <h3 className="font-bold text-stone-900">Add Table</h3>
               <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-stone-100 rounded-lg">
@@ -481,7 +481,7 @@ export default function TableVisualizer({
                   type="text"
                   value={newTable.table_number}
                   onChange={(e) => setNewTable({ ...newTable, table_number: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-500"
                   placeholder="e.g., T1, A5, VIP"
                   autoFocus
                 />
@@ -495,7 +495,7 @@ export default function TableVisualizer({
                       onClick={() => setNewTable({ ...newTable, capacity: cap })}
                       className={`flex-1 py-2 rounded-xl font-medium transition-colors ${
                         newTable.capacity === cap
-                          ? 'bg-amber-500 text-white'
+                          ? 'bg-stone-500 text-white'
                           : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                       }`}
                     >
@@ -517,7 +517,7 @@ export default function TableVisualizer({
                       onClick={() => setNewTable({ ...newTable, shape: shape.value as any })}
                       className={`flex-1 py-2 rounded-xl font-medium transition-colors ${
                         newTable.shape === shape.value
-                          ? 'bg-amber-500 text-white'
+                          ? 'bg-stone-500 text-white'
                           : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                       }`}
                     >
@@ -536,7 +536,7 @@ export default function TableVisualizer({
               </button>
               <button
                 onClick={handleAddTable}
-                className="flex-1 px-4 py-3 bg-amber-500 text-white rounded-xl font-medium hover:bg-amber-600"
+                className="flex-1 px-4 py-3 bg-stone-500 text-white rounded-xl font-medium hover:bg-stone-800"
               >
                 Add Table
               </button>

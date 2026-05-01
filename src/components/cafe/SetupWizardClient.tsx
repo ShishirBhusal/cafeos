@@ -214,13 +214,13 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-stone-50">
       {/* Header */}
-      <div className="bg-white border-b border-orange-100 px-4 py-4">
+      <div className="bg-white border-b border-stone-100 px-4 py-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-orange-100 rounded-xl">
-              <Sparkles className="w-6 h-6 text-orange-600" />
+            <div className="p-2 bg-stone-100 rounded-xl">
+              <Sparkles className="w-6 h-6 text-stone-600" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Sajilo Suru</h1>
@@ -233,14 +233,14 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
             {STEPS.map((step, i) => (
               <div key={step} className="flex-1 flex items-center gap-1">
                 <div className={`h-2 flex-1 rounded-full transition-colors ${
-                  i <= stepIndex ? 'bg-orange-500' : 'bg-gray-200'
+                  i <= stepIndex ? 'bg-stone-900' : 'bg-gray-200'
                 }`} />
               </div>
             ))}
           </div>
           <div className="flex justify-between mt-1">
             {STEPS.map((step, i) => (
-              <span key={step} className={`text-xs ${i <= stepIndex ? 'text-orange-600 font-medium' : 'text-gray-400'}`}>
+              <span key={step} className={`text-xs ${i <= stepIndex ? 'text-stone-700 font-medium' : 'text-gray-400'}`}>
                 {STEP_LABELS[step]}
               </span>
             ))}
@@ -266,15 +266,15 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
                 <button
                   key={template.template_key}
                   onClick={() => handleSelectTemplate(template)}
-                  className={`flex items-center gap-4 p-6 rounded-2xl border-2 transition-all text-left ${
+                  className={`flex items-center gap-4 p-6 rounded-xl border-2 transition-all text-left ${
                     selectedTemplate?.template_key === template.template_key
-                      ? 'border-orange-500 bg-orange-50 shadow-md'
-                      : 'border-gray-200 bg-white hover:border-orange-200 hover:shadow-sm'
+                      ? 'border-stone-500 bg-stone-50 shadow-md'
+                      : 'border-gray-200 bg-white hover:border-stone-200 hover:shadow-sm'
                   }`}
                 >
-                  <div className={`p-4 rounded-2xl ${
+                  <div className={`p-4 rounded-xl ${
                     selectedTemplate?.template_key === template.template_key
-                      ? 'bg-orange-500 text-white'
+                      ? 'bg-stone-900 text-white'
                       : 'bg-gray-100 text-gray-600'
                   }`}>
                     {TEMPLATE_ICONS[template.template_key] || <Store className="w-10 h-10" />}
@@ -283,12 +283,12 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
                     <h3 className="text-lg font-bold text-gray-900">{template.display_name}</h3>
                     <p className="text-sm text-gray-500">{template.display_name_np}</p>
                     <p className="text-sm text-gray-600 mt-1">{template.description}</p>
-                    <p className="text-xs text-orange-600 mt-1 font-medium">
+                    <p className="text-xs text-stone-600 mt-1 font-medium">
                       {template.items.length} items • {template.categories.length} categories
                     </p>
                   </div>
                   {selectedTemplate?.template_key === template.template_key && (
-                    <Check className="w-6 h-6 text-orange-500 shrink-0" />
+                    <Check className="w-6 h-6 text-stone-700 shrink-0" />
                   )}
                 </button>
               ))}
@@ -297,7 +297,7 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
             <button
               onClick={goNext}
               disabled={!selectedTemplate}
-              className="w-full py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 text-white font-bold rounded-2xl text-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full py-4 bg-stone-900 hover:bg-stone-800 disabled:bg-gray-300 text-white font-bold rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
             >
               Aghi Badhau <ChevronRight className="w-5 h-5" />
             </button>
@@ -316,7 +316,7 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
               const catItems = selectedTemplate.items.filter(item => item.category_slug === category.slug);
               if (catItems.length === 0) return null;
               return (
-                <div key={category.slug} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div key={category.slug} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
                     <h3 className="font-semibold text-gray-700">{category.name}</h3>
                   </div>
@@ -330,7 +330,7 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
                             onClick={() => handleToggleItem(item.slug)}
                             className={`w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${
                               override.enabled
-                                ? 'bg-orange-500 border-orange-500 text-white'
+                                ? 'bg-stone-900 border-stone-900 text-white'
                                 : 'border-gray-300 bg-white'
                             }`}
                           >
@@ -344,7 +344,7 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
                               value={override.price_cents / 100}
                               onChange={(e) => handlePriceChange(item.slug, Math.round(parseFloat(e.target.value || '0') * 100))}
                               disabled={!override.enabled}
-                              className="w-20 px-2 py-1.5 text-right border border-gray-300 rounded-lg text-sm font-mono focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none disabled:bg-gray-100"
+                              className="w-20 px-2 py-1.5 text-right border border-gray-300 rounded-lg text-sm font-mono focus:border-stone-500 focus:ring-1 focus:ring-stone-500 outline-none disabled:bg-gray-100"
                               min="0"
                               step="5"
                             />
@@ -364,14 +364,14 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
             <div className="flex gap-3">
               <button
                 onClick={goBack}
-                className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl text-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
               >
                 <ChevronLeft className="w-5 h-5" /> Pachhi
               </button>
               <button
                 onClick={goNext}
                 disabled={enabledItems.length === 0}
-                className="flex-1 py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 text-white font-bold rounded-2xl text-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-stone-900 hover:bg-stone-800 disabled:bg-gray-300 text-white font-bold rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
               >
                 Aghi Badhau <ChevronRight className="w-5 h-5" />
               </button>
@@ -387,7 +387,7 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
               <p className="text-gray-600 mt-1">Mahina ko fixed kharcha haru bharnuhos</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="divide-y divide-gray-100">
                 {fixedCosts.map((cost, index) => (
                   <div key={cost.type} className="flex items-center gap-3 px-4 py-4">
@@ -399,7 +399,7 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
                         type="number"
                         value={cost.amount_cents / 100}
                         onChange={(e) => handleCostChange(index, Math.round(parseFloat(e.target.value || '0') * 100))}
-                        className="w-24 px-2 py-1.5 text-right border border-gray-300 rounded-lg text-sm font-mono focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none"
+                        className="w-24 px-2 py-1.5 text-right border border-gray-300 rounded-lg text-sm font-mono focus:border-stone-500 focus:ring-1 focus:ring-stone-500 outline-none"
                         min="0"
                         step="500"
                       />
@@ -407,10 +407,10 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
                   </div>
                 ))}
               </div>
-              <div className="bg-orange-50 px-4 py-4 border-t border-orange-100">
+              <div className="bg-stone-50 px-4 py-4 border-t border-stone-100">
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-gray-900">Total Monthly</span>
-                  <span className="font-bold text-lg text-orange-600">{formatRs(totalFixedCosts)}</span>
+                  <span className="font-bold text-lg text-stone-700">{formatRs(totalFixedCosts)}</span>
                 </div>
                 <p className="text-sm text-gray-500 mt-1">
                   Daily share: {formatRs(dailyFixedCost)}/day
@@ -421,13 +421,13 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
             <div className="flex gap-3">
               <button
                 onClick={goBack}
-                className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl text-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
               >
                 <ChevronLeft className="w-5 h-5" /> Pachhi
               </button>
               <button
                 onClick={goNext}
-                className="flex-1 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl text-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-stone-900 hover:bg-stone-800 text-white font-bold rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
               >
                 Aghi Badhau <ChevronRight className="w-5 h-5" />
               </button>
@@ -444,9 +444,9 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
             </div>
 
             {/* Summary Card */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-orange-100 rounded-xl">
+                <div className="p-3 bg-stone-100 rounded-xl">
                   {TEMPLATE_ICONS[selectedTemplate.template_key]}
                 </div>
                 <div>
@@ -469,18 +469,18 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
                     step="5"
                     value={customersPerDay}
                     onChange={(e) => setCustomersPerDay(parseInt(e.target.value))}
-                    className="flex-1 accent-orange-500"
+                    className="flex-1 accent-stone-500"
                   />
-                  <span className="text-lg font-bold text-orange-600 w-12 text-right">{customersPerDay}</span>
+                  <span className="text-lg font-bold text-stone-700 w-12 text-right">{customersPerDay}</span>
                 </div>
               </div>
 
               <hr className="border-gray-200" />
 
               {/* Projection */}
-              <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 space-y-3">
+              <div className="bg-gradient-to-br from-stone-50 to-stone-100 rounded-xl p-5 space-y-3">
                 <h4 className="font-bold text-gray-900 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-orange-600" />
+                  <TrendingUp className="w-5 h-5 text-stone-600" />
                   Monthly Projection
                 </h4>
                 <div className="space-y-2">
@@ -510,14 +510,14 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
               <button
                 onClick={goBack}
                 disabled={isSubmitting}
-                className="py-4 px-6 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-100 text-gray-700 font-bold rounded-2xl text-lg transition-colors flex items-center justify-center gap-2"
+                className="py-4 px-6 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-100 text-gray-700 font-bold rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-bold rounded-2xl text-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-orange-200"
+                className="flex-1 py-4 bg-stone-900 hover:bg-stone-800 disabled:bg-stone-400 text-white font-bold rounded-xl text-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-stone-200"
               >
                 {isSubmitting ? (
                   <>

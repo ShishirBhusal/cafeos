@@ -124,16 +124,16 @@ export default function OrderStatusClient({ order: initialOrder, cafeName }: Ord
 
       <main className="p-4 max-w-lg mx-auto">
         {/* Token Number */}
-        <div className="bg-white rounded-2xl p-6 text-center mb-4 shadow-sm">
+        <div className="bg-white rounded-xl p-6 text-center mb-4 shadow-sm">
           <p className="text-sm text-gray-500 mb-2">Your Token</p>
-          <div className="text-6xl font-bold text-orange-600 mb-2">
+          <div className="text-6xl font-bold text-stone-900 mb-2">
             #{order.tokenNumber || '—'}
           </div>
           <p className="text-sm text-gray-500">{order.orderNumber}</p>
         </div>
 
         {/* Status Card */}
-        <div className={`rounded-2xl p-6 mb-4 ${status.color}`}>
+        <div className={`rounded-xl p-6 mb-4 ${status.color}`}>
           <div className="flex items-center justify-center gap-3">
             {status.icon}
             <span className="text-xl font-bold">{status.label}</span>
@@ -153,7 +153,7 @@ export default function OrderStatusClient({ order: initialOrder, cafeName }: Ord
         </div>
 
         {/* Order Items */}
-        <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+        <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
           <h2 className="font-semibold text-gray-900 mb-3">Order Items</h2>
           <div className="space-y-2">
             {order.items.map(item => (
@@ -169,7 +169,7 @@ export default function OrderStatusClient({ order: initialOrder, cafeName }: Ord
         </div>
 
         {/* Payment Status */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm">
+        <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Total</p>

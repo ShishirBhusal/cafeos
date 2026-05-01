@@ -1,13 +1,12 @@
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { getCurrentUser } from '@/lib/auth';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  Users, 
-  Star, 
-  TrendingUp, 
+import CafePageLayout from '@/components/cafe/CafePageLayout';
+import {
+  Users,
+  Star,
+  TrendingUp,
   Phone,
-  Gift,
   Calendar,
   ShoppingBag
 } from 'lucide-react';
@@ -26,19 +25,19 @@ interface Customer {
 }
 
 export default async function CustomerInsightsPage() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
   const supabase = await createClient();
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
-  
+
   // Fetch cafe info
   const { data: cafe } = await supabase
     .from('vendor_profiles')
     .select('user_id, business_name')
     .eq('user_id', user.id)
     .single();
-    
-  if (!cafe) redirect('/');
+
+  if (!cafe) return null;
   
   // Fetch all customers
   const { data: customers } = await supabase
@@ -68,24 +67,11 @@ export default async function CustomerInsightsPage() {
   const rewardEligible = (customers || []).filter(c => c.total_visits >= 10 && c.total_visits % 10 < 3);
   
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/cafe/dashboard" className="p-2 hover:bg-stone-100 rounded-lg">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-xl font-bold text-stone-900">Customer Chinha</h1>
-            <p className="text-sm text-stone-500">Know your regulars</p>
-          </div>
-        </div>
-      </header>
-      
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+    <CafePageLayout title="Customers" description="Customer management">
+      <div className="space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="flex items-center gap-2 text-sm text-stone-500 mb-1">
               <Users className="w-4 h-4" />
               Total Customers
@@ -93,15 +79,15 @@ export default async function CustomerInsightsPage() {
             <div className="text-2xl font-bold text-stone-900 tabular-nums">{totalCustomers}</div>
           </div>
           
-          <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
-            <div className="flex items-center gap-2 text-sm text-amber-700 mb-1">
+          <div className="bg-stone-50 rounded-xl p-4 border border-stone-200">
+            <div className="flex items-center gap-2 text-sm text-stone-700 mb-1">
               <Star className="w-4 h-4" />
               Regulars (5+ visits)
             </div>
-            <div className="text-2xl font-bold text-amber-700 tabular-nums">{regulars}</div>
+            <div className="text-2xl font-bold text-stone-700 tabular-nums">{regulars}</div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="flex items-center gap-2 text-sm text-stone-500 mb-1">
               <TrendingUp className="w-4 h-4" />
               Avg. Visits
@@ -109,7 +95,7 @@ export default async function CustomerInsightsPage() {
             <div className="text-2xl font-bold text-stone-900 tabular-nums">{avgVisits}</div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 border border-stone-200">
+          <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="flex items-center gap-2 text-sm text-stone-500 mb-1">
               <ShoppingBag className="w-4 h-4" />
               Customer Revenue
@@ -122,7 +108,7 @@ export default async function CustomerInsightsPage() {
         <CustomerRewardsClient cafeId={cafe.user_id} userId={user.id} />
         
         {/* Top Customers List */}
-        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           <div className="px-5 py-3 border-b border-stone-200 bg-stone-50 flex items-center justify-between">
             <h2 className="font-bold text-stone-900">Your Regulars</h2>
             <span className="text-sm text-stone-500">{totalCustomers} total</span>
@@ -142,9 +128,9 @@ export default async function CustomerInsightsPage() {
                     <div className="flex items-start gap-3">
                       {/* Rank Badge */}
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        index === 0 ? 'bg-amber-100 text-amber-700' :
+                        index === 0 ? 'bg-stone-100 text-stone-700' :
                         index === 1 ? 'bg-stone-200 text-stone-700' :
-                        index === 2 ? 'bg-orange-100 text-orange-700' :
+                        index === 2 ? 'bg-stone-100 text-stone-600' :
                         'bg-stone-100 text-stone-500'
                       }`}>
                         {index + 1}
@@ -156,7 +142,7 @@ export default async function CustomerInsightsPage() {
                             {customer.name || 'Unknown'}
                           </span>
                           {customer.total_visits >= 10 && (
-                            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                            <Star className="w-4 h-4 text-stone-400 fill-stone-400" />
                           )}
                         </div>
                         
@@ -174,7 +160,7 @@ export default async function CustomerInsightsPage() {
                     </div>
                     
                     <div className="text-right">
-                      <div className="text-lg font-bold text-amber-700 tabular-nums">
+                      <div className="text-lg font-bold text-stone-700 tabular-nums">
                         {customer.total_visits} visits
                       </div>
                       <div className="text-sm text-stone-500 tabular-nums">
@@ -193,16 +179,16 @@ export default async function CustomerInsightsPage() {
         </div>
         
         {/* Tips Section */}
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <h3 className="font-medium text-amber-800 mb-2">Customer Chinha Tips</h3>
-          <ul className="text-sm text-amber-700 space-y-1">
+        <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
+          <h3 className="font-medium text-stone-800 mb-2">Customer Chinha Tips</h3>
+          <ul className="text-sm text-stone-700 space-y-1">
             <li>- Checkout ma phone number rakhnus to track visits</li>
             <li>- Regulars lai naam le bolaunu — they love it</li>
             <li>- 10th visit ma free item dinus for loyalty</li>
             <li>- Usual order yaad rakhnus for faster service</li>
           </ul>
         </div>
-      </main>
-    </div>
+      </div>
+    </CafePageLayout>
   );
 }

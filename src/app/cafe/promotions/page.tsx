@@ -1,21 +1,7 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  Plus,
-  Clock,
-  Percent,
-  Gift,
-  Tag,
-  ToggleLeft,
-  ToggleRight,
-  Edit2,
-  Trash2,
-  Zap
-} from 'lucide-react';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 import PromotionsClient from '@/components/cafe/PromotionsClient';
 
 export const dynamic = 'force-dynamic';
@@ -47,14 +33,7 @@ async function createClient() {
 
 export default async function PromotionsPage() {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/promotions');
-  }
-  
-  if (!user.capabilities.canAccessCafeDashboard) {
-    redirect('/');
-  }
+  if (!user) return null;
 
   const supabase = await createClient();
   
@@ -90,12 +69,14 @@ export default async function PromotionsPage() {
     .order('name');
 
   return (
-    <PromotionsClient
-      cafeId={cafeId}
-      cafeName={cafeProfile?.business_name || 'My Cafe'}
-      initialPromotions={promotions || []}
-      menuItems={menuItems || []}
-      categories={categories || []}
-    />
+    <CafePageLayout title="Promotions" description="Manage deals and offers">
+      <PromotionsClient
+        cafeId={cafeId}
+        cafeName={cafeProfile?.business_name || 'My Cafe'}
+        initialPromotions={promotions || []}
+        menuItems={menuItems || []}
+        categories={categories || []}
+      />
+    </CafePageLayout>
   );
 }

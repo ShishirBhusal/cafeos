@@ -1,9 +1,7 @@
-import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 import TableVisualizer from '@/components/cafe/TableVisualizer';
 
 export const dynamic = 'force-dynamic';
@@ -35,14 +33,7 @@ async function createClient() {
 
 export default async function TablesPage() {
   const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect('/auth/login?redirect=/cafe/tables');
-  }
-  
-  if (!user.capabilities.canAccessCafeDashboard) {
-    redirect('/');
-  }
+  if (!user) return null;
 
   const supabase = await createClient();
   
@@ -80,31 +71,14 @@ export default async function TablesPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-stone-100">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link href="/cafe/dashboard" className="p-2 hover:bg-stone-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-stone-900">Tables</h1>
-              <p className="text-sm text-stone-500">{cafeProfile?.business_name} • Floor Plan</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto p-4">
-        <TableVisualizer
-          cafeId={cafeId}
-          cafeName={cafeProfile?.business_name || 'My Cafe'}
-          initialTables={tables}
-          floorWidth={900}
-          floorHeight={600}
-        />
-      </main>
-    </div>
+    <CafePageLayout title="Tables" description="Manage seating layout" fullWidth>
+      <TableVisualizer
+        cafeId={cafeId}
+        cafeName={cafeProfile?.business_name || 'My Cafe'}
+        initialTables={tables}
+        floorWidth={900}
+        floorHeight={600}
+      />
+    </CafePageLayout>
   );
 }

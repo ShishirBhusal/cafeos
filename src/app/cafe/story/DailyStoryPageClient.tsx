@@ -84,7 +84,7 @@ export default function DailyStoryPageClient({ cafeId, cafeName, initialStory }:
           </div>
           <Link
             href="/cafe/story/weekly"
-            className="flex items-center gap-1.5 px-3 py-2 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-sm font-medium hover:bg-amber-100 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 bg-stone-100 border border-stone-200 text-stone-700 rounded-xl text-sm font-medium hover:bg-stone-200 transition-colors"
           >
             <Calendar className="w-4 h-4" />
             <span>This Week</span>
@@ -95,7 +95,7 @@ export default function DailyStoryPageClient({ cafeId, cafeName, initialStory }:
       <main className="max-w-2xl mx-auto px-4 py-6">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-stone-500" />
             <span className="ml-3 text-stone-500">Loading story...</span>
           </div>
         ) : story ? (

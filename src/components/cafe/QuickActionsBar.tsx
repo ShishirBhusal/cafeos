@@ -30,7 +30,7 @@ export default function QuickActionsBar({
       href: '/cafe/counter',
       icon: <Plus className="w-5 h-5" />,
       label: 'New Order',
-      color: 'bg-amber-500 hover:bg-amber-600',
+      color: 'bg-stone-900 hover:bg-stone-800',
       primary: true,
     },
     {
@@ -72,7 +72,7 @@ export default function QuickActionsBar({
               <Link
                 key={action.href}
                 href={action.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-white shadow-lg transition-all transform ${action.color}`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-white shadow-lg transition-all transform ${action.color}`}
                 style={{
                   animation: `slideIn 0.2s ease-out ${index * 0.05}s both`,
                 }}
@@ -98,7 +98,7 @@ export default function QuickActionsBar({
           className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
             isExpanded 
               ? 'bg-stone-800 rotate-45' 
-              : 'bg-gradient-to-br from-amber-500 to-orange-600'
+              : 'bg-gradient-to-br from-stone-700 to-stone-900'
           }`}
         >
           {isExpanded ? (

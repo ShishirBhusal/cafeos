@@ -106,7 +106,7 @@ export default function PromotionsClient({
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'happy_hour': return <Clock className="w-5 h-5 text-orange-500" />;
+      case 'happy_hour': return <Clock className="w-5 h-5 text-stone-500" />;
       case 'combo': return <Gift className="w-5 h-5 text-purple-500" />;
       case 'discount': return <Percent className="w-5 h-5 text-green-500" />;
       case 'buy_x_get_y': return <Tag className="w-5 h-5 text-blue-500" />;
@@ -116,7 +116,7 @@ export default function PromotionsClient({
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'happy_hour': return 'bg-orange-100 border-orange-200';
+      case 'happy_hour': return 'bg-stone-100 border-stone-200';
       case 'combo': return 'bg-purple-100 border-purple-200';
       case 'discount': return 'bg-green-100 border-green-200';
       case 'buy_x_get_y': return 'bg-blue-100 border-blue-200';
@@ -292,7 +292,7 @@ export default function PromotionsClient({
             </div>
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-colors"
             >
               <Plus className="w-5 h-5" />
               Create
@@ -414,7 +414,7 @@ export default function PromotionsClient({
             </p>
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+              className="px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800"
             >
               Create Promotion
             </button>
@@ -448,7 +448,7 @@ export default function PromotionsClient({
       {/* Create Promotion Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white">
               <h2 className="text-lg font-bold">Create Promotion</h2>
               <button onClick={() => { setShowAddModal(false); resetForm(); }} className="p-2 hover:bg-gray-100 rounded-lg">
@@ -472,7 +472,7 @@ export default function PromotionsClient({
                       }}
                       className={`p-3 rounded-xl border-2 text-left transition-all ${
                         selectedType === type.value 
-                          ? 'border-orange-500 bg-orange-50' 
+                          ? 'border-stone-500 bg-stone-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -495,7 +495,7 @@ export default function PromotionsClient({
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                   placeholder="e.g., Evening Happy Hour"
                 />
               </div>
@@ -510,7 +510,7 @@ export default function PromotionsClient({
                         type="time"
                         value={formData.start_time}
                         onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                       />
                     </div>
                     <div>
@@ -519,7 +519,7 @@ export default function PromotionsClient({
                         type="time"
                         value={formData.end_time}
                         onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                       />
                     </div>
                   </div>
@@ -532,7 +532,7 @@ export default function PromotionsClient({
                           onClick={() => toggleDay(idx)}
                           className={`w-10 h-10 rounded-full font-medium text-sm ${
                             formData.days_of_week.includes(idx)
-                              ? 'bg-orange-500 text-white'
+                              ? 'bg-stone-900 text-white'
                               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }`}
                         >
@@ -549,7 +549,7 @@ export default function PromotionsClient({
                       max="100"
                       value={formData.discount_value}
                       onChange={(e) => setFormData({ ...formData, discount_value: parseInt(e.target.value) || 0 })}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                     />
                   </div>
                 </>
@@ -564,7 +564,7 @@ export default function PromotionsClient({
                       <select
                         value={formData.discount_type}
                         onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                       >
                         <option value="percentage">Percentage (%)</option>
                         <option value="fixed">Fixed Amount (Rs)</option>
@@ -577,7 +577,7 @@ export default function PromotionsClient({
                         min="1"
                         value={formData.discount_value}
                         onChange={(e) => setFormData({ ...formData, discount_value: parseInt(e.target.value) || 0 })}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                       />
                     </div>
                   </div>
@@ -594,7 +594,7 @@ export default function PromotionsClient({
                       min="1"
                       value={formData.buy_quantity}
                       onChange={(e) => setFormData({ ...formData, buy_quantity: parseInt(e.target.value) || 1 })}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                     />
                   </div>
                   <div>
@@ -604,7 +604,7 @@ export default function PromotionsClient({
                       min="1"
                       value={formData.get_quantity}
                       onChange={(e) => setFormData({ ...formData, get_quantity: parseInt(e.target.value) || 1 })}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                     />
                   </div>
                 </div>
@@ -618,7 +618,7 @@ export default function PromotionsClient({
                     type="date"
                     value={formData.valid_from}
                     onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                   />
                 </div>
                 <div>
@@ -627,7 +627,7 @@ export default function PromotionsClient({
                     type="date"
                     value={formData.valid_until}
                     onChange={(e) => setFormData({ ...formData, valid_until: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                   />
                 </div>
               </div>
@@ -643,7 +643,7 @@ export default function PromotionsClient({
               <button
                 onClick={handleCreate}
                 disabled={isLoading || !formData.name.trim()}
-                className="flex-1 px-4 py-3 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 disabled:opacity-50"
+                className="flex-1 px-4 py-3 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 disabled:opacity-50"
               >
                 {isLoading ? 'Creating...' : 'Create Promotion'}
               </button>

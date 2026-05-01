@@ -3,19 +3,15 @@
 import React, { useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
+import {
   Package,
   Plus,
   AlertTriangle,
   TrendingDown,
   Search,
-  Edit2,
   Trash2,
   X,
-  Check,
   Droplets,
-  RefreshCw
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -72,10 +68,10 @@ const UNITS = [
 const CATEGORIES = [
   { value: 'dairy', label: '🥛 Dairy', color: 'bg-blue-100 text-blue-700' },
   { value: 'spice', label: '🌶️ Spices', color: 'bg-red-100 text-red-700' },
-  { value: 'grain', label: '🌾 Grains', color: 'bg-amber-100 text-amber-700' },
+  { value: 'grain', label: '🌾 Grains', color: 'bg-stone-100 text-stone-700' },
   { value: 'vegetable', label: '🥬 Vegetables', color: 'bg-green-100 text-green-700' },
   { value: 'meat', label: '🥩 Meat', color: 'bg-rose-100 text-rose-700' },
-  { value: 'beverage', label: '☕ Beverages', color: 'bg-orange-100 text-orange-700' },
+  { value: 'beverage', label: '☕ Beverages', color: 'bg-sky-100 text-sky-700' },
   { value: 'oil', label: '🫒 Oils', color: 'bg-yellow-100 text-yellow-700' },
   { value: 'packaging', label: '📦 Packaging', color: 'bg-gray-100 text-gray-700' },
   { value: 'other', label: '📋 Other', color: 'bg-stone-100 text-stone-700' },
@@ -272,52 +268,27 @@ export default function InventoryClient({
   const formatPrice = (paisa: number) => `Rs ${(paisa / 100).toFixed(2)}`;
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/cafe/dashboard" className="p-2 hover:bg-gray-100 rounded-lg">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Saman Hisab</h1>
-                <p className="text-sm text-gray-500">Inventory • {cafeName}</p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              Add
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto p-4 space-y-6">
+    <div className="space-y-4">
         {/* Stock Alerts */}
         {stockAlerts.length > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-            <div className="flex items-center gap-2 text-red-800 font-medium mb-3">
-              <AlertTriangle className="w-5 h-5" />
+          <div className="bg-white border border-stone-200 rounded-xl p-5">
+            <div className="flex items-center gap-2 text-stone-900 font-semibold text-sm mb-3">
+              <AlertTriangle className="w-4 h-4 text-stone-400" />
               Low Stock Alerts ({stockAlerts.length})
             </div>
             <div className="space-y-2">
               {stockAlerts.slice(0, 5).map(alert => (
-                <div key={alert.id} className="flex items-center justify-between bg-white rounded-lg p-3">
+                <div key={alert.id} className="flex items-center justify-between bg-stone-50 rounded-xl p-3">
                   <div>
-                    <span className="font-medium text-gray-900">{alert.name}</span>
-                    <span className="text-sm text-gray-500 ml-2">
+                    <span className="font-medium text-stone-900">{alert.name}</span>
+                    <span className="text-sm text-stone-500 ml-2">
                       {alert.current_stock} {alert.unit} left
                     </span>
                   </div>
-                  <span className={`text-sm px-2 py-1 rounded-full ${
-                    alert.severity === 'critical' ? 'bg-red-500 text-white' :
-                    alert.severity === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-green-100 text-green-700'
+                  <span className={`text-sm px-2.5 py-1 rounded-full font-medium ${
+                    alert.severity === 'critical' ? 'bg-rose-500 text-white' :
+                    alert.severity === 'warning' ? 'bg-stone-100 text-stone-700' :
+                    'bg-emerald-100 text-emerald-700'
                   }`}>
                     {alert.severity === 'critical' ? 'Urgent!' : 'Low'}
                   </span>
@@ -329,20 +300,20 @@ export default function InventoryClient({
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
           <input
             type="text"
             placeholder="Search ingredients..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-300 text-sm"
           />
         </div>
 
         {/* Ingredients List */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-            <h2 className="font-semibold text-gray-900">
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-stone-200 bg-stone-50">
+            <h2 className="font-bold text-stone-900">
               Ingredients ({filteredIngredients.length})
             </h2>
           </div>
@@ -354,7 +325,7 @@ export default function InventoryClient({
               <p className="text-sm">Add your first ingredient to start tracking</p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                className="mt-4 px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800"
               >
                 Add Ingredient
               </button>
@@ -439,18 +410,17 @@ export default function InventoryClient({
             </div>
           </Link>
         </div>
-      </main>
 
       {/* Add Ingredient Modal - PURCHASE-FIRST UX */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-orange-500 to-amber-500 rounded-t-2xl">
+          <div className="bg-white rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b bg-stone-900 rounded-t-xl">
               <div>
                 <h2 className="text-lg font-bold text-white">Add Ingredient</h2>
-                <p className="text-sm text-orange-100">Tell us what you bought</p>
+                <p className="text-sm text-stone-400">Add a new stock item</p>
               </div>
-              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-white/20 rounded-lg text-white">
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-white/10 rounded-lg text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -459,14 +429,14 @@ export default function InventoryClient({
               {/* Step 1: What did you buy? */}
               <div className="bg-stone-50 rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-stone-600">
-                  <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs">1</span>
+                  <span className="w-6 h-6 rounded-full bg-stone-900 text-white flex items-center justify-center text-xs">1</span>
                   के किन्नुभयो? (What did you buy?)
                 </div>
                 <input
                   type="text"
                   value={newIngredient.name}
                   onChange={(e) => setNewIngredient({ ...newIngredient, name: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-orange-500 text-lg"
+                  className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-stone-500 text-lg"
                   placeholder="e.g., Dudh, Chiya Patti, Chini..."
                   autoFocus
                 />
@@ -477,7 +447,7 @@ export default function InventoryClient({
                       onClick={() => setNewIngredient({ ...newIngredient, category: cat.value })}
                       className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                         newIngredient.category === cat.value
-                          ? 'ring-2 ring-orange-500 ring-offset-1 ' + cat.color
+                          ? 'ring-2 ring-stone-500 ring-offset-1 ' + cat.color
                           : cat.color + ' opacity-60 hover:opacity-100'
                       }`}
                     >
@@ -609,7 +579,7 @@ export default function InventoryClient({
                 <button
                   onClick={handleAddIngredient}
                   disabled={isLoading || !newIngredient.name.trim()}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold hover:from-orange-600 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-500/25"
+                  className="flex-1 px-4 py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? 'Adding...' : '+ Add Ingredient'}
                 </button>
@@ -622,7 +592,7 @@ export default function InventoryClient({
       {/* Update Stock Modal */}
       {showStockModal && selectedIngredient && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md">
+          <div className="bg-white rounded-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-bold">Add Stock: {selectedIngredient.name}</h2>
               <button 
@@ -650,7 +620,7 @@ export default function InventoryClient({
                   type="number"
                   value={stockUpdate.quantity}
                   onChange={(e) => setStockUpdate({ ...stockUpdate, quantity: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-lg"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500 text-lg"
                   placeholder="Enter quantity"
                   autoFocus
                 />
@@ -664,7 +634,7 @@ export default function InventoryClient({
                   step="0.01"
                   value={stockUpdate.cost_cents}
                   onChange={(e) => setStockUpdate({ ...stockUpdate, cost_cents: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                   placeholder="Optional"
                 />
               </div>
@@ -676,7 +646,7 @@ export default function InventoryClient({
                   type="text"
                   value={stockUpdate.note}
                   onChange={(e) => setStockUpdate({ ...stockUpdate, note: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                   placeholder="e.g., Weekly purchase"
                 />
               </div>

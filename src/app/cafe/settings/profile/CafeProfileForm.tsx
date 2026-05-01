@@ -134,8 +134,8 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
   return (
     <div className="space-y-8">
       {/* Preview Link */}
-      <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-        <p className="text-sm text-orange-800">
+      <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
+        <p className="text-sm text-stone-800">
           <strong>Your cafe website:</strong>{' '}
           <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="underline">
             {previewUrl}
@@ -157,7 +157,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
               placeholder="e.g., Best momo in Baneshwor"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
               maxLength={100}
             />
             <p className="text-xs text-gray-500 mt-1">Short catchy phrase shown under your cafe name</p>
@@ -172,7 +172,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tell customers about your cafe..."
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
               maxLength={500}
             />
           </div>
@@ -196,7 +196,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               value={addressLine1}
               onChange={(e) => setAddressLine1(e.target.value)}
               placeholder="Street address"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
             />
           </div>
 
@@ -209,7 +209,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               value={area}
               onChange={(e) => setArea(e.target.value)}
               placeholder="e.g., Baneshwor, Thamel"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
             />
           </div>
 
@@ -222,7 +222,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="Kathmandu"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
             />
           </div>
 
@@ -235,7 +235,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               value={googleMapsUrl}
               onChange={(e) => setGoogleMapsUrl(e.target.value)}
               placeholder="https://maps.google.com/..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
             />
           </div>
         </div>
@@ -260,7 +260,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
                   type="checkbox"
                   checked={!openingHours[day]?.closed}
                   onChange={(e) => updateHours(day, 'closed', !e.target.checked)}
-                  className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                  className="rounded border-gray-300 text-stone-600 focus:ring-stone-500"
                 />
                 <span className="text-sm text-gray-600">Open</span>
               </label>
@@ -271,14 +271,14 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
                     type="time"
                     value={openingHours[day]?.open || '07:00'}
                     onChange={(e) => updateHours(day, 'open', e.target.value)}
-                    className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
                   />
                   <span className="text-gray-500">to</span>
                   <input
                     type="time"
                     value={openingHours[day]?.close || '21:00'}
                     onChange={(e) => updateHours(day, 'close', e.target.value)}
-                    className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
                   />
                 </>
               )}
@@ -297,7 +297,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               type="checkbox"
               checked={hasWifi}
               onChange={(e) => setHasWifi(e.target.checked)}
-              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+              className="rounded border-gray-300 text-stone-600 focus:ring-stone-500"
             />
             <Wifi className="w-5 h-5 text-gray-600" />
             <span className="font-medium text-gray-700">Free WiFi</span>
@@ -308,7 +308,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               type="checkbox"
               checked={hasParking}
               onChange={(e) => setHasParking(e.target.checked)}
-              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+              className="rounded border-gray-300 text-stone-600 focus:ring-stone-500"
             />
             <Car className="w-5 h-5 text-gray-600" />
             <span className="font-medium text-gray-700">Parking</span>
@@ -319,7 +319,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               type="checkbox"
               checked={hasAc}
               onChange={(e) => setHasAc(e.target.checked)}
-              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+              className="rounded border-gray-300 text-stone-600 focus:ring-stone-500"
             />
             <Sparkles className="w-5 h-5 text-gray-600" />
             <span className="font-medium text-gray-700">Air Conditioning</span>
@@ -331,7 +331,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
       <section className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-500" />
+            <Sparkles className="w-5 h-5 text-stone-400" />
             Today&apos;s Special
           </h2>
           <label className="flex items-center gap-2">
@@ -339,7 +339,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               type="checkbox"
               checked={dailySpecialActive}
               onChange={(e) => setDailySpecialActive(e.target.checked)}
-              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+              className="rounded border-gray-300 text-stone-600 focus:ring-stone-500"
             />
             <span className="text-sm font-medium text-gray-700">Show on website</span>
           </label>
@@ -355,7 +355,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               value={dailySpecialName}
               onChange={(e) => setDailySpecialName(e.target.value)}
               placeholder="e.g., Buff Momo Set"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
             />
           </div>
 
@@ -369,7 +369,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
               onChange={(e) => setDailySpecialPrice(e.target.value)}
               placeholder="150"
               min="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
             />
           </div>
         </div>
@@ -394,7 +394,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-6 py-2.5 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? (
             <>
