@@ -4,6 +4,28 @@ Everything Rabindra needs on the day, in order. Read once the night before.
 
 ---
 
+## 0. Live deployment
+
+| | |
+|---|---|
+| **Live site** | <https://cafeos-zeta.vercel.app> |
+| Source | <https://github.com/ShishirBhusal/cafeos> |
+| Vercel project | `cafeos` (divinetechinnovation0-cell) |
+
+**Important — the live site runs the ML in degraded mode.** Vercel cannot host the
+long-running Python service, so the Smart Reorder panel there falls back to the static
+coverage rule and shows the amber "Prediction service offline" banner. That is the FR-7
+behaviour by design, not a fault.
+
+**Demonstrate from localhost, not from the live URL.** Only the local setup in Section 1
+has the actual models running. Use the live URL to show the project is deployed and
+publicly reachable — then switch to localhost for the ML demonstration.
+
+To redeploy after a change: `npx vercel deploy --prod --yes` from the project root.
+(Automatic redeploy on `git push` is not wired up yet — see Section 8.)
+
+---
+
 ## 1. Twenty minutes before you present
 
 Run these two things and leave both windows open.
@@ -162,3 +184,50 @@ logic, through a test they wrote themselves, and says so, reads as an engineer.
 - [ ] Convert to DOCX/PDF and fix page numbers in the Table of Contents
 - [ ] Run `test_units.py` and `test_acceptance.py` once more and confirm the tables still match
 - [ ] Complete MT-01 (Section 2 above) so Section 4.3.2 is verified
+
+---
+
+## 8. Wiring automatic redeploy on git push (2 minutes, needs you)
+
+Right now a `git push` does **not** trigger a Vercel redeploy. Vercel refused to link the
+repository:
+
+```
+Failed to connect the GitHub repository ShishirBhusal/cafeos.
+You need admin or write access to the repository "cafeos" to link it. (400)
+```
+
+The cause is an account mismatch: the Vercel account is `divinetechinnovation0-cell`, but the
+repository lives under the `ShishirBhusal` GitHub account, and Vercel's GitHub App has not been
+granted access to it.
+
+To fix:
+
+1. Open <https://vercel.com/divinetechinnovation0-cells-projects/cafeos/settings/git>
+2. Click **Connect Git Repository** and choose GitHub.
+3. If `ShishirBhusal/cafeos` is not listed, click **Adjust GitHub App Permissions** and grant
+   the Vercel app access to that repository.
+4. Select `ShishirBhusal/cafeos`, branch `main`.
+
+After that, every `git push origin main` redeploys automatically.
+
+Until it is wired, deploy manually:
+
+```
+cd "D:\DTI\INVENTORY MANAGEMENT\cafeos"
+npx vercel deploy --prod --yes
+```
+
+## 9. Making the ML live on the deployed site (optional, after the defense)
+
+The Next.js route reads `ML_SERVICE_URL` and falls back to the static rule when it cannot be
+reached. To make predictions work on the public URL, host the FastAPI service anywhere that
+supports a long-running Python process (Render, Railway, Fly.io) and then:
+
+```
+npx vercel env add ML_SERVICE_URL production
+# paste the hosted service URL, e.g. https://cafeos-ml.onrender.com
+npx vercel deploy --prod --yes
+```
+
+No code change is required — the route already supports it.
