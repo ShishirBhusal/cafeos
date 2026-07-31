@@ -1,0 +1,70 @@
+{
+  "passed": 7,
+  "failed": 2,
+  "pass_rate_pct": 77.78,
+  "results": [
+    {
+      "Test ID": "MAT-01",
+      "Acceptance Criterion": "Demand forecast R-squared",
+      "Required": ">= 0.85",
+      "Actual": "0.8955",
+      "Status": "Pass"
+    },
+    {
+      "Test ID": "MAT-02",
+      "Acceptance Criterion": "Demand forecast MAE",
+      "Required": "<= 12 units",
+      "Actual": "8.13 units",
+      "Status": "Pass"
+    },
+    {
+      "Test ID": "MAT-03",
+      "Acceptance Criterion": "Improvement over lag-7 baseline",
+      "Required": ">= 10%",
+      "Actual": "16.4%",
+      "Status": "Pass"
+    },
+    {
+      "Test ID": "MAT-04",
+      "Acceptance Criterion": "Risk classifier accuracy",
+      "Required": ">= 80%",
+      "Actual": "77.79%",
+      "Status": "Fail"
+    },
+    {
+      "Test ID": "MAT-05",
+      "Acceptance Criterion": "Risk classifier macro F1",
+      "Required": ">= 0.75",
+      "Actual": "0.7497",
+      "Status": "Fail"
+    },
+    {
+      "Test ID": "MAT-06",
+      "Acceptance Criterion": "URGENT-class recall (safety-critical)",
+      "Required": ">= 0.75",
+      "Actual": "0.8221",
+      "Status": "Pass"
+    },
+    {
+      "Test ID": "MAT-07",
+      "Acceptance Criterion": "Beats the static coverage rule on macro F1",
+      "Required": "> baseline",
+      "Actual": "0.7497 vs 0.4727",
+      "Status": "Pass"
+    },
+    {
+      "Test ID": "MAT-08",
+      "Acceptance Criterion": "Perishable order never exceeds shelf life",
+      "Required": "<= 3 days of supply",
+      "Actual": "ordered 80.0 L = 2.98 days of supply",
+      "Status": "Pass"
+    },
+    {
+      "Test ID": "MAT-09",
+      "Acceptance Criterion": "Chronological split \u2014 no future data in training",
+      "Required": "train < test",
+      "Actual": "train ends 2026-02-17, test starts 2026-05-11",
+      "Status": "Pass"
+    }
+  ]
+}

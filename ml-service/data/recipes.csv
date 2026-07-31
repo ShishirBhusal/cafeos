@@ -1,0 +1,68 @@
+item_name,ingredient,qty_per_serving
+Milk Tea (Dudh Chiya),Milk,0.15
+Milk Tea (Dudh Chiya),Tea Leaves,0.005
+Milk Tea (Dudh Chiya),Sugar,0.012
+Masala Chiya,Milk,0.15
+Masala Chiya,Tea Leaves,0.005
+Masala Chiya,Sugar,0.012
+Masala Chiya,Masala Mix,0.002
+Masala Chiya,Ginger,0.003
+Masala Chiya,Cardamom,0.0005
+Black Tea (Kalo Chiya),Tea Leaves,0.004
+Black Tea (Kalo Chiya),Sugar,0.01
+Americano,Coffee Beans,0.018
+Cappuccino,Coffee Beans,0.018
+Cappuccino,Milk,0.12
+Cafe Latte,Coffee Beans,0.018
+Cafe Latte,Milk,0.18
+Hot Chocolate,Milk,0.2
+Hot Chocolate,Cocoa Powder,0.02
+Hot Chocolate,Sugar,0.015
+Cold Coffee,Coffee Beans,0.016
+Cold Coffee,Milk,0.15
+Cold Coffee,Ice,0.1
+Cold Coffee,Sugar,0.015
+Iced Americano,Coffee Beans,0.018
+Iced Americano,Ice,0.12
+Lassi,Yoghurt,0.2
+Lassi,Sugar,0.018
+Lassi,Ice,0.05
+Fresh Lime Soda,Lime,0.04
+Fresh Lime Soda,Soda Water,0.25
+Fresh Lime Soda,Sugar,0.012
+Fresh Lime Soda,Ice,0.08
+Veg Momo,Momo Wrapper,10.0
+Veg Momo,Cabbage,0.09
+Veg Momo,Onion,0.04
+Veg Momo,Cooking Oil,0.008
+Buff Momo,Momo Wrapper,10.0
+Buff Momo,Buff Mince,0.1
+Buff Momo,Onion,0.04
+Buff Momo,Cooking Oil,0.008
+Chicken Chowmein,Noodles,0.12
+Chicken Chowmein,Chicken Breast,0.07
+Chicken Chowmein,Cabbage,0.05
+Chicken Chowmein,Onion,0.03
+Chicken Chowmein,Cooking Oil,0.015
+Veg Thukpa,Noodles,0.1
+Veg Thukpa,Cabbage,0.06
+Veg Thukpa,Onion,0.03
+Veg Thukpa,Cooking Oil,0.01
+Club Sandwich,Bread Loaf,0.25
+Club Sandwich,Chicken Breast,0.06
+Club Sandwich,Cheese Slice,1.0
+Club Sandwich,Eggs,1.0
+Club Sandwich,Butter,0.01
+Chicken Burger,Burger Bun,1.0
+Chicken Burger,Chicken Breast,0.09
+Chicken Burger,Cheese Slice,1.0
+Chicken Burger,Onion,0.02
+Chicken Burger,Cooking Oil,0.012
+French Fries,Potato,0.18
+French Fries,Cooking Oil,0.03
+Samosa,Wheat Flour,0.04
+Samosa,Potato,0.06
+Samosa,Cooking Oil,0.02
+Chocolate Cake Slice,Chocolate Cake,0.125
+Croissant,Croissant (frozen),1.0
+Croissant,Butter,0.005

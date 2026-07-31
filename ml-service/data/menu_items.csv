@@ -1,0 +1,22 @@
+name,category,base_units,price_rs,thermal_response
+Milk Tea (Dudh Chiya),beverage_hot,95,40,1.0
+Masala Chiya,beverage_hot,62,50,1.0
+Black Tea (Kalo Chiya),beverage_hot,28,30,1.0
+Americano,beverage_hot,34,150,0.7
+Cappuccino,beverage_hot,41,190,0.7
+Cafe Latte,beverage_hot,37,200,0.7
+Hot Chocolate,beverage_hot,18,180,1.0
+Cold Coffee,beverage_cold,30,220,-1.0
+Iced Americano,beverage_cold,22,180,-1.0
+Lassi,beverage_cold,25,120,-0.9
+Fresh Lime Soda,beverage_cold,27,100,-1.0
+Veg Momo,food_main,58,160,0.2
+Buff Momo,food_main,64,180,0.2
+Chicken Chowmein,food_main,44,190,0.1
+Veg Thukpa,food_main,21,170,0.6
+Club Sandwich,food_main,26,250,0.0
+Chicken Burger,food_main,23,280,0.0
+French Fries,food_snack,39,130,0.0
+Samosa,food_snack,33,40,0.1
+Chocolate Cake Slice,food_bakery,17,160,0.0
+Croissant,food_bakery,12,140,0.0

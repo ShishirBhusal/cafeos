@@ -1,0 +1,226 @@
+{
+  "project": "CafeOS \u2014 Intelligent Inventory Management",
+  "data_disclosure": "All training and evaluation data is SYNTHETIC, produced by generate_dataset.py. The live CafeOS database holds only ~17 genuine point-of-sale orders, far below the volume supervised learning requires. These figures show that the models recover the structure present in the simulation; they are not evidence of real-world forecasting accuracy.",
+  "split_strategy": "chronological 70/15/15 (train/validation/test)",
+  "model_1_demand_forecaster": {
+    "task": "regression \u2014 next-day units sold per menu item",
+    "selected_model": "Random Forest Regressor",
+    "rows": {
+      "train": 7420,
+      "validation": 1596,
+      "test": 1596
+    },
+    "validation_selection": [
+      {
+        "model": "Random Forest Regressor",
+        "val_mae": 8.489,
+        "val_r2": 0.9029
+      },
+      {
+        "model": "Ridge Regression",
+        "val_mae": 9.377,
+        "val_r2": 0.8885
+      },
+      {
+        "model": "Baseline: same weekday last week",
+        "val_mae": 10.742,
+        "val_r2": 0.8457
+      }
+    ],
+    "test_metrics": {
+      "mae_units": 8.1307,
+      "rmse_units": 10.9243,
+      "r2": 0.8955
+    },
+    "baseline_test_mae": 9.7256,
+    "improvement_over_baseline_pct": 16.4,
+    "top_features": [
+      {
+        "feature": "lag_7",
+        "importance": 0.466
+      },
+      {
+        "feature": "lag_14",
+        "importance": 0.2937
+      },
+      {
+        "feature": "lag_1",
+        "importance": 0.1195
+      },
+      {
+        "feature": "festival_effect_enc",
+        "importance": 0.0324
+      },
+      {
+        "feature": "price_rs",
+        "importance": 0.0192
+      },
+      {
+        "feature": "roll_std_7",
+        "importance": 0.0084
+      },
+      {
+        "feature": "days_since_open",
+        "importance": 0.0082
+      },
+      {
+        "feature": "day_of_week",
+        "importance": 0.0077
+      },
+      {
+        "feature": "day_of_month",
+        "importance": 0.0076
+      },
+      {
+        "feature": "thermal_index",
+        "importance": 0.0076
+      },
+      {
+        "feature": "dow_ratio",
+        "importance": 0.0064
+      },
+      {
+        "feature": "roll_mean_28",
+        "importance": 0.0058
+      }
+    ]
+  },
+  "model_2_stockout_risk": {
+    "task": "3-class classification \u2014 SAFE / WATCH / URGENT over a 7-day horizon",
+    "selected_model": "Random Forest Classifier",
+    "rows": {
+      "train": 10108,
+      "validation": 2156,
+      "test": 2184
+    },
+    "class_distribution": {
+      "SAFE": 0.5446,
+      "URGENT": 0.2711,
+      "WATCH": 0.1843
+    },
+    "validation_selection": [
+      {
+        "model": "Gradient Boosting Classifier",
+        "val_accuracy": 0.8159,
+        "val_macro_f1": 0.7872
+      },
+      {
+        "model": "Random Forest Classifier",
+        "val_accuracy": 0.8122,
+        "val_macro_f1": 0.79
+      },
+      {
+        "model": "Decision Tree Classifier",
+        "val_accuracy": 0.8047,
+        "val_macro_f1": 0.7775
+      },
+      {
+        "model": "Baseline: static coverage rule",
+        "val_accuracy": 0.4852,
+        "val_macro_f1": 0.4636
+      },
+      {
+        "model": "Baseline: majority class",
+        "val_accuracy": 0.5311,
+        "val_macro_f1": 0.2312
+      }
+    ],
+    "test_metrics": {
+      "accuracy": 0.7779,
+      "macro_precision": 0.7363,
+      "macro_recall": 0.7716,
+      "macro_f1": 0.7497
+    },
+    "static_rule_baseline": {
+      "accuracy": 0.5014,
+      "macro_f1": 0.4727
+    },
+    "urgent_recall": {
+      "model": 0.8221,
+      "static_rule": 0.4484
+    },
+    "per_class_report": {
+      "SAFE": {
+        "precision": 0.8772727272727273,
+        "recall": 0.7769726247987118,
+        "f1-score": 0.8240819812126388,
+        "support": 1242.0
+      },
+      "URGENT": {
+        "precision": 0.7649006622516556,
+        "recall": 0.8220640569395018,
+        "f1-score": 0.7924528301886793,
+        "support": 562.0
+      },
+      "WATCH": {
+        "precision": 0.5666666666666667,
+        "recall": 0.7157894736842105,
+        "f1-score": 0.6325581395348837,
+        "support": 380.0
+      },
+      "accuracy": 0.7779304029304029,
+      "macro avg": {
+        "precision": 0.7362800187303499,
+        "recall": 0.7716087184741415,
+        "f1-score": 0.7496976503120673,
+        "support": 2184.0
+      },
+      "weighted avg": {
+        "precision": 0.7943132934026974,
+        "recall": 0.7779304029304029,
+        "f1-score": 0.7826192327176698,
+        "support": 2184.0
+      }
+    },
+    "top_features": [
+      {
+        "feature": "coverage_days",
+        "importance": 0.1672
+      },
+      {
+        "feature": "days_since_purchase",
+        "importance": 0.12
+      },
+      {
+        "feature": "shelf_life_days",
+        "importance": 0.1072
+      },
+      {
+        "feature": "opening_stock",
+        "importance": 0.0695
+      },
+      {
+        "feature": "volatility_ratio",
+        "importance": 0.0684
+      },
+      {
+        "feature": "incoming_qty_7d",
+        "importance": 0.0661
+      },
+      {
+        "feature": "consumption_std_7d",
+        "importance": 0.0531
+      },
+      {
+        "feature": "consumption_mean_14d",
+        "importance": 0.0519
+      },
+      {
+        "feature": "consumption_mean_7d",
+        "importance": 0.0516
+      },
+      {
+        "feature": "consumption_mean_28d",
+        "importance": 0.0504
+      },
+      {
+        "feature": "consumption_trend",
+        "importance": 0.0489
+      },
+      {
+        "feature": "supplier_lead_time_days",
+        "importance": 0.0321
+      }
+    ]
+  }
+}

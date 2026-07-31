@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import InventoryClient from '@/components/cafe/InventoryClient';
 import CafePageLayout from '@/components/cafe/CafePageLayout';
+import SmartReorderPanel from '@/components/cafe/SmartReorderPanel';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,6 +69,9 @@ export default async function InventoryPage() {
 
   return (
     <CafePageLayout title="Saman Hisab" description="Inventory management">
+      <div className="mb-6">
+        <SmartReorderPanel />
+      </div>
       <InventoryClient
         cafeId={cafeId}
         cafeName={cafeProfile?.business_name || 'My Cafe'}

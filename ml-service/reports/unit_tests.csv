@@ -1,0 +1,17 @@
+Test ID,Component,Test Input,Expected Result,Actual Result,Status
+MUT-01,festival_context,2025-10-01 (Dashain),"effect=exodus, mult=0.58","effect=exodus, mult=0.58",Pass
+MUT-02,festival_context,2025-09-19 (3 days pre-Dashain),"effect=pre_festival, mult=1.28","effect=pre_festival, mult=1.28",Pass
+MUT-03,festival_context,2026-03-03 (Holi),"effect=spike, mult=1.45","effect=spike, mult=1.45",Pass
+MUT-04,thermal_index,15 January,approx +1.0,1.000,Pass
+MUT-05,thermal_index,16 July,approx -1.0,-1.000,Pass
+MUT-06,FIFO batch expiry,"1 expired batch (10), 1 fresh (5)","expired discarded, 5 retained","wasted=10.0, on_hand=5.0",Pass
+MUT-07,Stockout detection,"demand=50, stock=30","stockout flagged, 30 consumed","flag=True, consumed=30.0",Pass
+MUT-08,Recipe explosion,155 milk teas x 0.15 L,"23.25 L raw, ~24.6 L with 6% waste","23.25 L raw, 24.64 L with waste",Pass
+MUT-09,safe_encode,unseen ingredient name,"returns 0, no exception",returned 0,Pass
+MUT-10,_pad,"10-day history, 28 required",padded to length 28,"length 28, mean 5.0",Pass
+MUT-11,"Risk prediction (stable, high cover)","Sugar, ~11 days cover",class SAFE,SAFE (conf 0.8115),Pass
+MUT-12,"Risk prediction (perishable, low cover)","Buff Mince, ~0.25 days cover",class URGENT,URGENT (conf 0.7709),Pass
+MUT-13,Probability distribution,risk prediction output,3 classes summing to 1.0,"3 classes, sum=1.0000",Pass
+MUT-14,Model bundle loading,both .joblib bundles,models + feature lists load,Random Forest Regressor (19 features); Random Forest Classifier (19 features),Pass
+MUT-15,Health endpoint,GET /health,status ok with model names,"ok: ['Random Forest Regressor', 'Random Forest Classifier']",Pass
+MUT-16,Causal feature construction,lag_7 alignment check,lag_7 at row i equals units at row i-7,aligned=True,Pass

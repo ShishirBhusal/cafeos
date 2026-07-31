@@ -1,0 +1,11 @@
+# Python virtual environment (~410 MB — recreate with start.bat)
+.venv/
+venv/
+
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Diagram rendering scratch
+.mmd_tmp/

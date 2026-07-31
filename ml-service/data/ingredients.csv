@@ -1,0 +1,29 @@
+name,unit,pack_size,pack_price_rs,shelf_life_days,lead_time_days,order_multiple
+Milk,L,1,95,4,1,20
+Tea Leaves,kg,1,650,365,3,2
+Sugar,kg,1,110,365,3,10
+Coffee Beans,kg,1,1800,120,5,2
+Masala Mix,kg,1,900,180,4,1
+Cocoa Powder,kg,1,1200,240,5,1
+Ginger,kg,1,180,14,1,2
+Cardamom,kg,1,3200,240,6,1
+Ice,kg,5,60,2,1,4
+Lime,kg,1,140,10,1,3
+Soda Water,L,1,70,180,3,12
+Yoghurt,kg,1,160,6,1,5
+Momo Wrapper,pcs,100,180,5,2,6
+Buff Mince,kg,1,480,3,1,6
+Chicken Breast,kg,1,420,3,1,6
+Cabbage,kg,1,60,8,1,5
+Onion,kg,1,90,21,2,8
+Noodles,kg,1,150,120,3,5
+Potato,kg,1,70,30,2,12
+Bread Loaf,pcs,1,75,3,1,8
+Burger Bun,pcs,1,30,4,1,10
+Cheese Slice,pcs,1,22,30,3,20
+Cooking Oil,L,1,210,180,3,5
+Wheat Flour,kg,1,85,90,3,8
+Butter,kg,1,780,60,3,2
+Eggs,pcs,1,18,21,2,30
+Chocolate Cake,pcs,1,900,4,2,2
+Croissant (frozen),pcs,1,55,45,4,12

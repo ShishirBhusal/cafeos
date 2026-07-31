@@ -1,0 +1,10 @@
+Test ID,Acceptance Criterion,Required,Actual,Status
+MAT-01,Demand forecast R-squared,>= 0.85,0.8955,Pass
+MAT-02,Demand forecast MAE,<= 12 units,8.13 units,Pass
+MAT-03,Improvement over lag-7 baseline,>= 10%,16.4%,Pass
+MAT-04,Risk classifier accuracy,>= 80%,77.79%,Fail
+MAT-05,Risk classifier macro F1,>= 0.75,0.7497,Fail
+MAT-06,URGENT-class recall (safety-critical),>= 0.75,0.8221,Pass
+MAT-07,Beats the static coverage rule on macro F1,> baseline,0.7497 vs 0.4727,Pass
+MAT-08,Perishable order never exceeds shelf life,<= 3 days of supply,ordered 80.0 L = 2.98 days of supply,Pass
+MAT-09,Chronological split — no future data in training,train < test,"train ends 2026-02-17, test starts 2026-05-11",Pass
