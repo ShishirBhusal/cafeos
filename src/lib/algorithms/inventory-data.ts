@@ -49,20 +49,52 @@ export async function loadInventoryDataset(
   cafeId: string,
   windowDays = 28
 ): Promise<InventoryDataset> {
-  const end = new Date();
-  const start = new Date();
+  // Anchor the window on the most recent day the cafe actually traded, not on
+  // today. A cafe that was closed for a stretch (or a demo database whose seed
+  // data is older than the calendar window) still gets a meaningful analysis
+  // instead of an empty screen. When trading is current, this is identical to
+  // "the last `windowDays` days".
+  const { data: latestRow } = await supabase
+    .from('order_items')
+    .select('created_at')
+    .eq('vendor_id', cafeId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const today = new Date();
+  const latestTraded = latestRow?.created_at ? new Date(latestRow.created_at as string) : today;
+  // Never anchor in the future; otherwise use the later of the two is wrong —
+  // we want the most recent *trading* day, capped at today.
+  const end = latestTraded < today ? latestTraded : today;
+
+  const start = new Date(end);
   start.setUTCDate(start.getUTCDate() - (windowDays - 1));
   const startIso = isoDate(start);
+  const endIso = isoDate(end);
 
   // --- 1. Sold order-items in the window -----------------------------------
-  const { data: itemRows } = await supabase
-    .from('order_items')
-    .select('product_id, product_name, quantity, created_at')
-    .eq('vendor_id', cafeId)
-    .gte('created_at', startIso)
-    .order('created_at', { ascending: true });
+  // PostgREST returns at most 1000 rows per request, so page until exhausted.
+  // Without this a busy cafe silently loses the tail of its history and the
+  // dropped days look like zero-sales days to the forecast.
+  const PAGE = 1000;
+  const endExclusive = isoDate(new Date(end.getTime() + 86400000));
+  const items: { product_id: string; product_name: string; quantity: number; created_at: string }[] = [];
 
-  const items = itemRows ?? [];
+  for (let offset = 0; ; offset += PAGE) {
+    const { data: page, error } = await supabase
+      .from('order_items')
+      .select('product_id, product_name, quantity, created_at')
+      .eq('vendor_id', cafeId)
+      .gte('created_at', startIso)
+      .lt('created_at', endExclusive)
+      .order('created_at', { ascending: true })
+      .range(offset, offset + PAGE - 1);
+
+    if (error || !page || page.length === 0) break;
+    items.push(...(page as typeof items));
+    if (page.length < PAGE) break;
+  }
 
   // Distinct calendar days actually covered by data, plus a zero-filled spine so
   // KNN sees "sold nothing" days too (important — a quiet Monday is signal).
@@ -87,9 +119,25 @@ export async function loadInventoryDataset(
     bucket.perDay.set(day, (bucket.perDay.get(day) ?? 0) + (Number(it.quantity) || 0));
   }
 
+  // Drop a trailing partial day. The most recent day is often captured
+  // mid-service (the cafe is still open, or the export stopped part-way), and a
+  // half-recorded day is not a low-demand day — feeding it to the forecast as if
+  // it were would bias every prediction downwards. Rule: if the last day's total
+  // is under half the median of the other days, treat it as incomplete.
+  const dayTotals = dayKeys.map((d) =>
+    [...byProduct.values()].reduce((s, b) => s + (b.perDay.get(d) ?? 0), 0)
+  );
+  const effectiveDayKeys = [...dayKeys];
+  if (dayTotals.length > 2) {
+    const head = dayTotals.slice(0, -1).filter((t) => t > 0).sort((a, b) => a - b);
+    const median = head.length ? head[Math.floor(head.length / 2)] : 0;
+    const last = dayTotals[dayTotals.length - 1];
+    if (median > 0 && last < median * 0.5) effectiveDayKeys.pop();
+  }
+
   const menuSales: MenuItemSales[] = [...byProduct.entries()]
     .map(([productId, { name, perDay }]) => {
-      const daily = dayKeys.map((date) => ({ date, units: perDay.get(date) ?? 0 }));
+      const daily = effectiveDayKeys.map((date) => ({ date, units: perDay.get(date) ?? 0 }));
       const totalUnits = daily.reduce((s, d) => s + d.units, 0);
       return { productId, name, totalUnits, daily };
     })
@@ -156,7 +204,7 @@ export async function loadInventoryDataset(
   return {
     windowDays,
     startDate: startIso,
-    endDate: isoDate(end),
+    endDate: effectiveDayKeys[effectiveDayKeys.length - 1] ?? endIso,
     orderCount: orderIds.size || items.length,
     menuSales,
     abcInputs,
