@@ -29,6 +29,16 @@ interface UserInfo {
   displayName: string;
 }
 
+/**
+ * Real top-level route segments under src/app. Any other single segment at the
+ * root is a public cafe microsite slug (/[cafeSlug]), which renders its own nav.
+ */
+const APP_ROUTE_SEGMENTS = new Set([
+  'about', 'actions', 'admin', 'auth', 'book-a-stylist', 'bookings', 'cafe',
+  'checkout', 'explore', 'legal', 'order-confirmation', 'order', 'payment',
+  'product', 'profile', 'shop', 'stylist', 'support', 'track-order', 'vendor',
+]);
+
 export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -120,7 +130,16 @@ export default function CafeOSHeader({ isAuthed = false }: CafeOSHeaderProps) {
   if (pathname?.startsWith('/cafe/')) {
     return null;
   }
-  
+
+  // Don't show it on a public cafe microsite either. Those live at the root as
+  // /[cafeSlug] and carry their own branded nav over the hero image, so the
+  // global header would stack a second bar on top of it. Anything whose first
+  // path segment isn't a real app route is a cafe slug.
+  const firstSegment = pathname?.split('/').filter(Boolean)[0];
+  if (firstSegment && !APP_ROUTE_SEGMENTS.has(firstSegment)) {
+    return null;
+  }
+
   // Choose which nav links to show based on current page
   const navLinks = isCafePage ? cafeNavLinks : publicNavLinks;
 

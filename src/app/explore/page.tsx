@@ -181,37 +181,8 @@ export default async function ExplorePage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-stone-50">
       {/* Nav */}
-      <nav className="border-b border-stone-200 bg-white">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700">
-              <ArrowLeft className="w-4 h-4" />
-              Home
-            </Link>
-            <div className="h-4 w-px bg-stone-200" />
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-stone-900 rounded-lg flex items-center justify-center">
-                <Coffee className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="font-semibold text-stone-900">Explore</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/auth/login"
-              className="text-sm text-stone-600 hover:text-stone-800 font-medium"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/auth/login?mode=signup"
-              className="text-sm bg-stone-900 hover:bg-stone-800 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-            >
-              List your cafe
-            </Link>
-          </div>
-        </div>
-      </nav>
+      {/* Navigation comes from the global CafeOSHeader in app/layout.tsx.
+          A second bar here produced two stacked navbars. */}
 
       {/* Search Section */}
       <section className="bg-white border-b border-stone-200">
