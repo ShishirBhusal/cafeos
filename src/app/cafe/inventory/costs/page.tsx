@@ -3,8 +3,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
+import {
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -14,6 +13,8 @@ import {
   HelpCircle,
   ThumbsDown
 } from 'lucide-react';
+import { getMenuCostAnalysis } from '@/lib/algorithms/inventory-data';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,11 +75,10 @@ export default async function FoodCostsPage() {
 
   const cafeId = cafeProfile?.user_id || user.id;
 
-  // Fetch menu cost analysis
-  const { data: menuCosts } = await supabase
-    .rpc('get_menu_cost_analysis', { p_cafe_id: cafeId });
-
-  const items: MenuCostItem[] = menuCosts || [];
+  // Real per-item food cost & margin, computed from live recipe/ingredient/variant
+  // tables. Replaces the legacy get_menu_cost_analysis RPC, which read an empty
+  // table and reported every item at 100% margin.
+  const items: MenuCostItem[] = await getMenuCostAnalysis(supabase, cafeId);
 
   // Categorize items into Stars, Workhorses, Puzzles, Dogs
   // Based on margin percentage: High (>60%), Medium (40-60%), Low (<40%)
@@ -108,23 +108,8 @@ export default async function FoodCostsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link href="/cafe/inventory" className="p-2 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Food Cost Analysis</h1>
-              <p className="text-sm text-gray-500">{cafeProfile?.business_name}</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto p-4 space-y-6">
+    <CafePageLayout title="Food Cost Analysis" description={cafeProfile?.business_name || 'Menu margin breakdown'}>
+      <div className="space-y-6">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl p-4 shadow-sm">
@@ -330,7 +315,7 @@ export default async function FoodCostsPage() {
             </table>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </CafePageLayout>
   );
 }

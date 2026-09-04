@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import RecipesClient from '@/components/cafe/RecipesClient';
+import { getCafeMenuOptions } from '@/lib/cafe-context';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,13 +55,8 @@ export default async function RecipesPage() {
 
   const cafeId = cafeProfile?.user_id || user.id;
 
-  // Fetch menu items
-  const { data: menuItems } = await supabase
-    .from('products')
-    .select('id, name, base_price_cents, category_id, categories(name)')
-    .eq('vendor_id', cafeId)
-    .eq('is_active', true)
-    .order('name');
+  // Fetch menu items (variant-aware pricing)
+  const menuItems = await getCafeMenuOptions(supabase, cafeId);
 
   // Fetch ingredients
   const { data: ingredients } = await supabase
@@ -95,11 +91,11 @@ export default async function RecipesPage() {
     <RecipesClient
       cafeId={cafeId}
       cafeName={cafeProfile?.business_name || 'My Cafe'}
-      menuItems={(menuItems || []).map((m: any) => ({
+      menuItems={menuItems.map((m) => ({
         id: m.id,
         name: m.name,
-        price_cents: m.base_price_cents || 0,
-        category: Array.isArray(m.categories) ? m.categories[0]?.name : m.categories?.name || 'Uncategorized',
+        price_cents: m.price_cents,
+        category: m.category_name,
       }))}
       ingredients={(ingredients || []).map(i => ({
         id: i.id,

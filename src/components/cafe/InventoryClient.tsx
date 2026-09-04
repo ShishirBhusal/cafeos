@@ -12,6 +12,8 @@ import {
   Trash2,
   X,
   Droplets,
+  Pencil,
+  Sparkles,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -23,6 +25,7 @@ interface Ingredient {
   current_stock: number;
   min_stock_level: number;
   purchase_price_cents: number;
+  unit_size: number;
   category?: string;
   supplier_id?: string;
   is_active?: boolean;
@@ -39,46 +42,60 @@ interface StockAlert {
   severity: 'critical' | 'warning' | 'ok';
 }
 
-interface MenuItem {
-  id: string;
-  name: string;
-  price_cents: number;
-  category_id: string | null;
-  categories: { name: string } | null;
-}
-
 interface InventoryClientProps {
   cafeId: string;
   cafeName: string;
   initialIngredients: Ingredient[];
   stockAlerts: StockAlert[];
-  menuItems: MenuItem[];
 }
 
 const UNITS = [
-  { value: 'kg', label: 'Kilograms (kg)', baseUnit: 'g', multiplier: 1000 },
-  { value: 'g', label: 'Grams (g)', baseUnit: 'g', multiplier: 1 },
-  { value: 'L', label: 'Liters (L)', baseUnit: 'ml', multiplier: 1000 },
-  { value: 'ml', label: 'Milliliters (ml)', baseUnit: 'ml', multiplier: 1 },
-  { value: 'pcs', label: 'Pieces', baseUnit: 'pcs', multiplier: 1 },
-  { value: 'dozen', label: 'Dozen (12 pcs)', baseUnit: 'pcs', multiplier: 12 },
-  { value: 'packet', label: 'Packet', baseUnit: 'packet', multiplier: 1 },
+  { value: 'kg', label: 'Kilograms (kg)' },
+  { value: 'g', label: 'Grams (g)' },
+  { value: 'L', label: 'Liters (L)' },
+  { value: 'ml', label: 'Milliliters (ml)' },
+  { value: 'pcs', label: 'Pieces' },
+  { value: 'dozen', label: 'Dozen (12 pcs)' },
+  { value: 'packet', label: 'Packet' },
+  { value: 'loaf', label: 'Loaf' },
 ];
 
+// Values match what is already stored in cafe_ingredients.category.
 const CATEGORIES = [
   { value: 'dairy', label: '🥛 Dairy', color: 'bg-blue-100 text-blue-700' },
-  { value: 'spice', label: '🌶️ Spices', color: 'bg-red-100 text-red-700' },
-  { value: 'grain', label: '🌾 Grains', color: 'bg-stone-100 text-stone-700' },
-  { value: 'vegetable', label: '🥬 Vegetables', color: 'bg-green-100 text-green-700' },
+  { value: 'beverages', label: '☕ Beverages', color: 'bg-sky-100 text-sky-700' },
+  { value: 'spices', label: '🌶️ Spices', color: 'bg-red-100 text-red-700' },
+  { value: 'grains', label: '🌾 Grains', color: 'bg-amber-100 text-amber-700' },
+  { value: 'vegetables', label: '🥬 Vegetables', color: 'bg-green-100 text-green-700' },
   { value: 'meat', label: '🥩 Meat', color: 'bg-rose-100 text-rose-700' },
-  { value: 'beverage', label: '☕ Beverages', color: 'bg-sky-100 text-sky-700' },
-  { value: 'oil', label: '🫒 Oils', color: 'bg-yellow-100 text-yellow-700' },
+  { value: 'basics', label: '🧂 Basics', color: 'bg-yellow-100 text-yellow-700' },
   { value: 'packaging', label: '📦 Packaging', color: 'bg-gray-100 text-gray-700' },
   { value: 'other', label: '📋 Other', color: 'bg-stone-100 text-stone-700' },
 ];
 
-function formatRs(cents: number): string {
-  return `Rs ${(cents / 100).toLocaleString('en-IN')}`;
+// Tolerant lookup: legacy singular values ("spice") still resolve to a chip.
+const LEGACY_CATEGORY_ALIASES: Record<string, string> = {
+  spice: 'spices',
+  grain: 'grains',
+  vegetable: 'vegetables',
+  beverage: 'beverages',
+  oil: 'basics',
+};
+
+function categoryMeta(value?: string | null) {
+  if (!value) return null;
+  const key = LEGACY_CATEGORY_ALIASES[value] ?? value;
+  return CATEGORIES.find((c) => c.value === key) ?? null;
+}
+
+/**
+ * `purchase_price_cents` holds the price paid for one whole pack (in paisa) and
+ * `unit_size` holds how many tracking units that pack contains. Cost per tracking
+ * unit is therefore price / size. Recipe costing relies on this same convention.
+ */
+function costPerUnitPaisa(ing: Pick<Ingredient, 'purchase_price_cents' | 'unit_size'>): number {
+  const size = ing.unit_size && ing.unit_size > 0 ? ing.unit_size : 1;
+  return (ing.purchase_price_cents || 0) / size;
 }
 
 export default function InventoryClient({
@@ -86,14 +103,15 @@ export default function InventoryClient({
   cafeName,
   initialIngredients,
   stockAlerts,
-  menuItems,
 }: InventoryClientProps) {
   const supabase = createClient();
-  
+
   const [ingredients, setIngredients] = useState<Ingredient[]>(initialIngredients);
   const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showStockModal, setShowStockModal] = useState(false);
+  const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(null);
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -113,20 +131,23 @@ export default function InventoryClient({
     minStockLevel: 1,        // Alert when below this
   });
 
-  // Computed: cost per tracking unit (in paisa)
-  const costPerUnit = newIngredient.packSize > 0
-    ? Math.round((newIngredient.purchasePrice * 100) / newIngredient.packSize)
-    : 0;
-
   const [stockUpdate, setStockUpdate] = useState({
     quantity: 0,
     cost_cents: 0,
     note: '',
   });
 
-  // Filter ingredients by search
-  const filteredIngredients = ingredients.filter(ing =>
-    ing.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter ingredients by search + category
+  const filteredIngredients = ingredients.filter(ing => {
+    const matchesSearch = ing.name.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!matchesSearch) return false;
+    if (categoryFilter === 'all') return true;
+    return (categoryMeta(ing.category)?.value ?? 'other') === categoryFilter;
+  });
+
+  // Categories that actually have ingredients, for the filter row
+  const usedCategories = CATEGORIES.filter(cat =>
+    ingredients.some(ing => (categoryMeta(ing.category)?.value ?? 'other') === cat.value)
   );
 
   // Get stock status
@@ -162,13 +183,13 @@ export default function InventoryClient({
       return;
     }
 
+    if (newIngredient.packSize <= 0) {
+      toast.error('Pack size must be greater than zero');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Calculate cost per unit in paisa (cents)
-      const costPerUnitPaisa = newIngredient.packSize > 0
-        ? Math.round((newIngredient.purchasePrice * 100) / newIngredient.packSize)
-        : 0;
-
       const { data, error } = await supabase
         .from('cafe_ingredients')
         .insert({
@@ -177,7 +198,8 @@ export default function InventoryClient({
           unit: newIngredient.trackingUnit,
           current_stock: newIngredient.currentStock,
           min_stock_level: newIngredient.minStockLevel,
-          purchase_price_cents: costPerUnitPaisa,
+          // Whole-pack price in paisa, paired with the pack size below.
+          purchase_price_cents: Math.round(newIngredient.purchasePrice * 100),
           unit_size: newIngredient.packSize,
           category: newIngredient.category,
         })
@@ -186,7 +208,7 @@ export default function InventoryClient({
 
       if (error) throw error;
 
-      setIngredients([...ingredients, data]);
+      setIngredients([...ingredients, data].sort((a, b) => a.name.localeCompare(b.name)));
       setShowAddModal(false);
       setNewIngredient({
         name: '',
@@ -216,21 +238,27 @@ export default function InventoryClient({
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.rpc('add_ingredient_stock', {
+      const { error } = await supabase.rpc('add_ingredient_stock', {
         p_cafe_id: cafeId,
         p_ingredient_id: selectedIngredient.id,
         p_quantity: stockUpdate.quantity,
-        p_cost_cents: stockUpdate.cost_cents * 100,
+        p_cost_cents: Math.round(stockUpdate.cost_cents * 100),
         p_note: stockUpdate.note || null,
       });
 
       if (error) throw error;
 
-      // Update local state
-      setIngredients(ingredients.map(ing => 
-        ing.id === selectedIngredient.id 
-          ? { ...ing, current_stock: data.new_stock }
-          : ing
+      // Read the authoritative stock back rather than trusting the RPC payload shape.
+      const { data: fresh } = await supabase
+        .from('cafe_ingredients')
+        .select('current_stock')
+        .eq('id', selectedIngredient.id)
+        .single();
+
+      const newStock = fresh?.current_stock ?? selectedIngredient.current_stock + stockUpdate.quantity;
+
+      setIngredients(ingredients.map(ing =>
+        ing.id === selectedIngredient.id ? { ...ing, current_stock: newStock } : ing
       ));
 
       setShowStockModal(false);
@@ -239,29 +267,73 @@ export default function InventoryClient({
       toast.success('Stock updated!');
     } catch (error) {
       console.error('Error updating stock:', error);
-      toast.error('Failed to update stock');
+      toast.error(error instanceof Error ? error.message : 'Failed to update stock');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Delete ingredient
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this ingredient?')) return;
+  // Save edits to an existing ingredient
+  const handleSaveEdit = async () => {
+    if (!editingIngredient) return;
+    if (!editingIngredient.name.trim()) {
+      toast.error('Please enter ingredient name');
+      return;
+    }
+    if (!editingIngredient.unit_size || editingIngredient.unit_size <= 0) {
+      toast.error('Pack size must be greater than zero');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('cafe_ingredients')
+        .update({
+          name: editingIngredient.name.trim(),
+          unit: editingIngredient.unit,
+          min_stock_level: editingIngredient.min_stock_level,
+          purchase_price_cents: editingIngredient.purchase_price_cents,
+          unit_size: editingIngredient.unit_size,
+          category: editingIngredient.category,
+        })
+        .eq('id', editingIngredient.id);
+
+      if (error) throw error;
+
+      setIngredients(
+        ingredients
+          .map(ing => (ing.id === editingIngredient.id ? editingIngredient : ing))
+          .sort((a, b) => a.name.localeCompare(b.name))
+      );
+      setEditingIngredient(null);
+      toast.success('Ingredient updated');
+    } catch (error) {
+      console.error('Error updating ingredient:', error);
+      toast.error('Failed to update ingredient');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Remove ingredient. Deactivates rather than hard-deletes so recipes and the
+  // stock-movement history that reference it stay intact.
+  const handleDelete = async (ing: Ingredient) => {
+    if (!confirm(`Remove "${ing.name}" from your inventory?\n\nPast purchase history and any recipes using it are kept.`)) return;
 
     try {
       const { error } = await supabase
         .from('cafe_ingredients')
-        .delete()
-        .eq('id', id);
+        .update({ is_active: false })
+        .eq('id', ing.id);
 
       if (error) throw error;
 
-      setIngredients(ingredients.filter(ing => ing.id !== id));
-      toast.success('Ingredient deleted');
+      setIngredients(ingredients.filter(i => i.id !== ing.id));
+      toast.success(`${ing.name} removed`);
     } catch (error) {
-      console.error('Error deleting ingredient:', error);
-      toast.error('Failed to delete ingredient');
+      console.error('Error removing ingredient:', error);
+      toast.error('Failed to remove ingredient');
     }
   };
 
@@ -298,17 +370,60 @@ export default function InventoryClient({
           </div>
         )}
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
-          <input
-            type="text"
-            placeholder="Search ingredients..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-300 text-sm"
-          />
+        {/* Search + Add */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+            <input
+              type="text"
+              placeholder="Search ingredients..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-300 text-sm"
+            />
+          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center justify-center gap-2 px-5 py-3 bg-stone-900 text-white rounded-lg font-medium hover:bg-stone-800 transition-colors whitespace-nowrap"
+          >
+            <Plus className="w-5 h-5" />
+            Add Ingredient
+          </button>
         </div>
+
+        {/* Category filter */}
+        {usedCategories.length > 1 && (
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setCategoryFilter('all')}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                categoryFilter === 'all'
+                  ? 'bg-stone-900 text-white'
+                  : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
+              }`}
+            >
+              All ({ingredients.length})
+            </button>
+            {usedCategories.map(cat => {
+              const count = ingredients.filter(
+                ing => (categoryMeta(ing.category)?.value ?? 'other') === cat.value
+              ).length;
+              return (
+                <button
+                  key={cat.value}
+                  onClick={() => setCategoryFilter(cat.value)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                    categoryFilter === cat.value
+                      ? 'ring-2 ring-stone-500 ring-offset-1 ' + cat.color
+                      : cat.color + ' opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  {cat.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Ingredients List */}
         <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
@@ -321,37 +436,61 @@ export default function InventoryClient({
           {filteredIngredients.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p className="font-medium">No ingredients yet</p>
-              <p className="text-sm">Add your first ingredient to start tracking</p>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="mt-4 px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800"
-              >
-                Add Ingredient
-              </button>
+              {ingredients.length === 0 ? (
+                <>
+                  <p className="font-medium">No ingredients yet</p>
+                  <p className="text-sm">Add your first ingredient to start tracking</p>
+                  <button
+                    onClick={() => setShowAddModal(true)}
+                    className="mt-4 px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800"
+                  >
+                    Add Ingredient
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="font-medium">No matching ingredients</p>
+                  <p className="text-sm">Try a different search or category</p>
+                  <button
+                    onClick={() => { setSearchTerm(''); setCategoryFilter('all'); }}
+                    className="mt-4 px-4 py-2 border border-stone-300 rounded-lg hover:bg-stone-50"
+                  >
+                    Clear filters
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
               {filteredIngredients.map(ing => {
                 const status = getStockStatus(ing);
                 const badge = getStatusBadge(status);
-                
+                const cat = categoryMeta(ing.category);
+
                 return (
                   <div key={ing.id} className={`p-4 hover:bg-gray-50 ${getStatusColor(status)}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-medium text-gray-900">{ing.name}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-full ${badge.color}`}>
                             {badge.text}
                           </span>
+                          {cat && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${cat.color}`}>
+                              {cat.label}
+                            </span>
+                          )}
                         </div>
-                        <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 mt-1 text-sm text-gray-500 flex-wrap">
                           <span>
                             <strong>{ing.current_stock}</strong> {ing.unit}
                           </span>
                           <span>
-                            Cost: {formatPrice(ing.purchase_price_cents)}/{ing.unit}
+                            Cost: {formatPrice(costPerUnitPaisa(ing))}/{ing.unit}
+                          </span>
+                          <span className="text-gray-400">
+                            {formatPrice(ing.purchase_price_cents)} per {ing.unit_size} {ing.unit} pack
                           </span>
                         </div>
                       </div>
@@ -367,9 +506,16 @@ export default function InventoryClient({
                           <Plus className="w-5 h-5" />
                         </button>
                         <button
-                          onClick={() => handleDelete(ing.id)}
+                          onClick={() => setEditingIngredient({ ...ing })}
+                          className="p-2 text-stone-600 hover:bg-stone-100 rounded-lg"
+                          title="Edit"
+                        >
+                          <Pencil className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(ing)}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                          title="Delete"
+                          title="Remove"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -383,7 +529,20 @@ export default function InventoryClient({
         </div>
 
         {/* Quick Links */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link
+            href="/cafe/inventory/insights"
+            className="bg-gradient-to-br from-indigo-500 to-violet-600 text-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3 col-span-2 lg:col-span-1"
+          >
+            <div className="p-2 bg-white/20 rounded-lg">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h4 className="font-medium">Smart Insights</h4>
+              <p className="text-sm text-white/80">Forecast &amp; ABC analysis</p>
+            </div>
+          </Link>
+
           <Link
             href="/cafe/inventory/recipes"
             className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3"
@@ -584,6 +743,147 @@ export default function InventoryClient({
                   {isLoading ? 'Adding...' : '+ Add Ingredient'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Ingredient Modal */}
+      {editingIngredient && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b bg-stone-900 rounded-t-xl">
+              <div>
+                <h2 className="text-lg font-bold text-white">Edit Ingredient</h2>
+                <p className="text-sm text-stone-400">{editingIngredient.name}</p>
+              </div>
+              <button onClick={() => setEditingIngredient(null)} className="p-2 hover:bg-white/10 rounded-lg text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={editingIngredient.name}
+                  onChange={(e) => setEditingIngredient({ ...editingIngredient, name: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-stone-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Category</label>
+                <div className="flex flex-wrap gap-2">
+                  {CATEGORIES.map(cat => {
+                    const current = categoryMeta(editingIngredient.category)?.value ?? 'other';
+                    return (
+                      <button
+                        key={cat.value}
+                        onClick={() => setEditingIngredient({ ...editingIngredient, category: cat.value })}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                          current === cat.value
+                            ? 'ring-2 ring-stone-500 ring-offset-1 ' + cat.color
+                            : cat.color + ' opacity-60 hover:opacity-100'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="bg-emerald-50 rounded-xl p-4 space-y-3">
+                <p className="text-sm font-medium text-emerald-700">Pack price &amp; size</p>
+                <div className="flex items-end gap-3">
+                  <div className="flex-1">
+                    <label className="block text-xs text-emerald-600 mb-1">Pack Price</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-600 font-medium">Rs</span>
+                      <input
+                        type="number"
+                        value={editingIngredient.purchase_price_cents / 100}
+                        onChange={(e) =>
+                          setEditingIngredient({
+                            ...editingIngredient,
+                            purchase_price_cents: Math.round((parseFloat(e.target.value) || 0) * 100),
+                          })
+                        }
+                        className="w-full pl-10 pr-3 py-2.5 border-2 border-emerald-200 rounded-xl focus:outline-none focus:border-emerald-500 font-bold"
+                      />
+                    </div>
+                  </div>
+                  <div className="text-xl text-stone-300 pb-2">/</div>
+                  <div className="flex-1">
+                    <label className="block text-xs text-emerald-600 mb-1">Pack Size</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        value={editingIngredient.unit_size}
+                        onChange={(e) =>
+                          setEditingIngredient({ ...editingIngredient, unit_size: parseFloat(e.target.value) || 0 })
+                        }
+                        className="w-16 px-2 py-2.5 border-2 border-emerald-200 rounded-xl focus:outline-none focus:border-emerald-500 font-bold"
+                      />
+                      <select
+                        value={editingIngredient.unit}
+                        onChange={(e) => setEditingIngredient({ ...editingIngredient, unit: e.target.value })}
+                        className="flex-1 px-2 py-2.5 border-2 border-emerald-200 rounded-xl focus:outline-none focus:border-emerald-500 font-medium"
+                      >
+                        {UNITS.some(u => u.value === editingIngredient.unit) ? null : (
+                          <option value={editingIngredient.unit}>{editingIngredient.unit}</option>
+                        )}
+                        {UNITS.map(u => (
+                          <option key={u.value} value={u.value}>{u.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                {editingIngredient.unit_size > 0 && (
+                  <div className="bg-white rounded-lg p-3 flex items-center justify-between">
+                    <span className="text-sm text-emerald-700">✓ Cost per {editingIngredient.unit}:</span>
+                    <span className="text-lg font-bold text-emerald-700">
+                      {formatPrice(costPerUnitPaisa(editingIngredient))}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  Alert when below ({editingIngredient.unit})
+                </label>
+                <input
+                  type="number"
+                  value={editingIngredient.min_stock_level}
+                  onChange={(e) =>
+                    setEditingIngredient({ ...editingIngredient, min_stock_level: parseFloat(e.target.value) || 0 })
+                  }
+                  className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-stone-500 font-bold"
+                />
+                <p className="mt-1 text-xs text-stone-500">
+                  Current stock is {editingIngredient.current_stock} {editingIngredient.unit}. Use &ldquo;Add Stock&rdquo; to record a purchase.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 border-t bg-stone-50 rounded-b-xl flex gap-3">
+              <button
+                onClick={() => setEditingIngredient(null)}
+                className="flex-1 px-4 py-3 border border-stone-300 rounded-xl font-medium hover:bg-stone-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={isLoading || !editingIngredient.name.trim()}
+                className="flex-1 px-4 py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-bold disabled:opacity-50 transition-colors"
+              >
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </button>
             </div>
           </div>
         </div>

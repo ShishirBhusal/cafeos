@@ -117,3 +117,62 @@ export async function getCategories(supabase: SupabaseClient) {
   
   return data || [];
 }
+
+/**
+ * Flat menu list for pickers (recipes, promotions, inventory linking).
+ *
+ * Cafe products keep their price on `product_variants.price` (rupees) rather than
+ * `products.base_price_cents`, which is null for every cafe product. This returns
+ * one representative price per product — the cheapest active variant — already in
+ * paisa, so callers never have to know that.
+ */
+export async function getCafeMenuOptions(
+  supabase: SupabaseClient,
+  cafeId: string
+): Promise<
+  {
+    id: string;
+    name: string;
+    price_cents: number;
+    category_id: string | null;
+    category_name: string;
+  }[]
+> {
+  const { data: products, error } = await supabase
+    .from('products')
+    .select(`
+      id,
+      name,
+      base_price_cents,
+      category_id,
+      categories(name),
+      product_variants(price, is_active)
+    `)
+    .eq('vendor_id', cafeId)
+    .eq('is_active', true)
+    .order('name');
+
+  if (error) {
+    console.error('[CafeMenuOptions] Error fetching products:', error);
+    return [];
+  }
+
+  return (products || []).map((p: any) => {
+    const activePrices = (p.product_variants || [])
+      .filter((v: any) => v.is_active !== false && v.price != null)
+      .map((v: any) => Math.round(Number(v.price) * 100));
+
+    const price_cents = activePrices.length
+      ? Math.min(...activePrices)
+      : p.base_price_cents || 0;
+
+    const cats = p.categories;
+    return {
+      id: p.id,
+      name: p.name,
+      price_cents,
+      category_id: p.category_id ?? null,
+      category_name: (Array.isArray(cats) ? cats[0]?.name : cats?.name) || 'Uncategorized',
+    };
+  });
+}

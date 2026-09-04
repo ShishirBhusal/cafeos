@@ -59,14 +59,6 @@ export default async function InventoryPage() {
   const { data: stockAlerts } = await supabase
     .rpc('get_stock_alerts', { p_cafe_id: cafeId });
 
-  // Fetch menu items for recipe linking
-  const { data: menuItems } = await supabase
-    .from('products')
-    .select('id, name, price_cents, category_id, categories(name)')
-    .eq('vendor_id', cafeId)
-    .eq('is_active', true)
-    .order('name');
-
   return (
     <CafePageLayout title="Saman Hisab" description="Inventory management">
       <div className="mb-6">
@@ -77,7 +69,6 @@ export default async function InventoryPage() {
         cafeName={cafeProfile?.business_name || 'My Cafe'}
         initialIngredients={ingredients || []}
         stockAlerts={stockAlerts || []}
-        menuItems={menuItems || []}
       />
     </CafePageLayout>
   );

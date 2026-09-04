@@ -1,11 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  User, 
-  Phone, 
-  Calendar, 
+import {
+  ArrowLeft,
+  User,
+  Phone,
+  Calendar,
   ShoppingBag,
   Star,
   Gift,
@@ -14,6 +14,7 @@ import {
   Receipt
 } from 'lucide-react';
 import { formatRs } from '@/lib/formatRs';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 
 interface PageProps {
   params: Promise<{ customerId: string }>;
@@ -92,21 +93,16 @@ export default async function CustomerDetailPage({ params }: PageProps) {
     : null;
   
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/cafe/customers" className="p-2 hover:bg-stone-100 rounded-lg">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-xl font-bold text-stone-900">Customer Details</h1>
-            <p className="text-sm text-stone-500">{cafe.business_name}</p>
-          </div>
-        </div>
-      </header>
-      
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <CafePageLayout
+      title="Customer Details"
+      description={cafe.business_name}
+      actions={
+        <Link href="/cafe/customers" className="inline-flex items-center gap-2 rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50">
+          <ArrowLeft className="w-4 h-4" /> Customers
+        </Link>
+      }
+    >
+      <div className="max-w-2xl space-y-6">
         {/* Customer Profile Card */}
         <div className="bg-white rounded-xl border border-stone-200 p-6">
           <div className="flex items-start gap-4">
@@ -253,7 +249,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
             </div>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+    </CafePageLayout>
   );
 }

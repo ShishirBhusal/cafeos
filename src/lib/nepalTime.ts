@@ -96,6 +96,22 @@ export function getNepaliGreeting(): string {
 }
 
 /**
+ * Get an English greeting ("Good morning"/"afternoon"/"evening"/"night")
+ * based on the current hour in Nepal timezone.
+ * - 4 AM - 12 PM: Good morning
+ * - 12 PM - 5 PM: Good afternoon
+ * - 5 PM - 8 PM: Good evening
+ * - 8 PM - 4 AM: Good night
+ */
+export function getGreeting(): string {
+  const hour = getNepaliHour();
+  if (hour >= 4 && hour < 12) return 'Good morning';
+  if (hour >= 12 && hour < 17) return 'Good afternoon';
+  if (hour >= 17 && hour < 20) return 'Good evening';
+  return 'Good night';
+}
+
+/**
  * Get a Date object representing the current moment in Nepal timezone
  * Note: The returned Date object's UTC methods will give Nepal time values
  */

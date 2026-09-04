@@ -45,3 +45,8 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Local Claude Code session state (worktrees, launch config)
+.claude/worktrees/
+scripts/_dbq.mjs
+scripts/_sql.mjs

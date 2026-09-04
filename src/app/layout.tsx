@@ -26,7 +26,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CafeOS - Nepal's #1 Cafe Management Platform",
+  title: "CafeOS - Cafe Management Platform for Nepal",
   description: "Run your cafe like a pro. QR ordering, kitchen display, daily reports. Free forever.",
   icons: {
     icon: [

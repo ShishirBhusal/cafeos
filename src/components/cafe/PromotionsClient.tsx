@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import Link from 'next/link';
-import { 
-  ArrowLeft, 
+import {
   Plus,
   Clock,
   Percent,
@@ -18,6 +16,7 @@ import {
   Calendar
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import CafePageLayout from '@/components/cafe/CafePageLayout';
 
 interface Promotion {
   id: string;
@@ -45,7 +44,7 @@ interface MenuItem {
   name: string;
   price_cents: number;
   category_id: string | null;
-  categories: { name: string } | null;
+  category_name: string;
 }
 
 interface Category {
@@ -276,32 +275,20 @@ export default function PromotionsClient({
   const pausedPromotions = promotions.filter(p => !p.is_active);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/cafe/dashboard" className="p-2 hover:bg-gray-100 rounded-lg">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Smart Promotions</h1>
-                <p className="text-sm text-gray-500">{cafeName}</p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              Create
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto p-4 space-y-6">
+    <CafePageLayout
+      title="Smart Promotions"
+      description={cafeName}
+      actions={
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-colors"
+        >
+          <Plus className="w-5 h-5" />
+          Create
+        </button>
+      }
+    >
+      <div className="space-y-6">
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-green-50 border border-green-200 rounded-xl p-4">
@@ -443,7 +430,7 @@ export default function PromotionsClient({
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* Create Promotion Modal */}
       {showAddModal && (
@@ -651,6 +638,6 @@ export default function PromotionsClient({
           </div>
         </div>
       )}
-    </div>
+    </CafePageLayout>
   );
 }

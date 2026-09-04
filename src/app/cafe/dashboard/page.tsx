@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { formatRs } from '@/lib/formatRs';
-import { getNepaliDayName, getNepaliHour } from '@/lib/nepalTime';
+import { getNepaliDayName, getNepaliHour, getNepaliDateString, nepalDateToUTCRange, getGreeting } from '@/lib/nepalTime';
 import {
   TrendingUp,
   TrendingDown,
@@ -39,14 +39,6 @@ async function createClient() {
       },
     }
   );
-}
-
-function getGreeting(): string {
-  const hour = getNepaliHour();
-  if (hour >= 4 && hour < 12) return 'Good morning';
-  if (hour >= 12 && hour < 17) return 'Good afternoon';
-  if (hour >= 17 && hour < 20) return 'Good evening';
-  return 'Good evening';
 }
 
 export default async function CafeDashboardPage() {
@@ -100,7 +92,7 @@ export default async function CafeDashboardPage() {
       .from('orders')
       .select('primary_customer_phone', { count: 'exact', head: true })
       .eq('cafe_id', cafeId)
-      .gte('created_at', new Date(new Date().toISOString().split('T')[0]).toISOString())
+      .gte('created_at', nepalDateToUTCRange(getNepaliDateString()).start)
       .not('primary_customer_phone', 'is', null),
   ]);
 

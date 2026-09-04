@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import CafePageLayout from '@/components/cafe/CafePageLayout';
+import CafeQRCode from '@/components/cafe/CafeQRCode';
 import {
   ArrowLeft,
   Store,
@@ -81,13 +82,6 @@ export default async function CafeSettingsPage() {
       status: 'coming_soon',
     },
     {
-      title: 'QR Code Setup',
-      icon: <QrCode className="w-5 h-5" />,
-      description: 'Generate QR codes for tables',
-      href: '/cafe/settings/qr',
-      status: 'coming_soon',
-    },
-    {
       title: 'Notifications',
       icon: <Bell className="w-5 h-5" />,
       description: 'Order alerts, sound settings',
@@ -125,8 +119,14 @@ export default async function CafeSettingsPage() {
             </div>
           </div>
           <p className="mt-4 text-sm text-stone-300">
-            Share this link or print QR codes for customers to order from their phones
+            Share this link or print a QR code for customers to order from their phones
           </p>
+          <div className="mt-4">
+            <CafeQRCode
+              cafeUrl={qrOrderUrl}
+              cafeName={cafeProfile?.business_name || 'Cafe'}
+            />
+          </div>
         </div>
 
         {/* Settings List */}

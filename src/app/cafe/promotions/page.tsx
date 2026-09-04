@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import CafePageLayout from '@/components/cafe/CafePageLayout';
 import PromotionsClient from '@/components/cafe/PromotionsClient';
+import { getCafeMenuOptions } from '@/lib/cafe-context';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,13 +54,8 @@ export default async function PromotionsPage() {
     .eq('cafe_id', cafeId)
     .order('created_at', { ascending: false });
 
-  // Fetch menu items for combo selection
-  const { data: menuItems } = await supabase
-    .from('products')
-    .select('id, name, price_cents, category_id, categories(name)')
-    .eq('vendor_id', cafeId)
-    .eq('is_active', true)
-    .order('name');
+  // Fetch menu items for combo selection (variant-aware pricing)
+  const menuItems = await getCafeMenuOptions(supabase, cafeId);
 
   // Fetch categories
   const { data: categories } = await supabase
