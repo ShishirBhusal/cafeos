@@ -100,6 +100,21 @@ export default function SmartReorderPanel() {
       : plan.lines.filter((l) => l.risk_class !== 'SAFE' || l.order_packs > 0)
     : [];
 
+  // The Python prediction service only runs locally, so on a deployed host this
+  // panel would permanently show the "service offline" banner. Rather than put a
+  // broken-looking module in front of visitors, hide it entirely there.
+  //
+  // On localhost the panel always renders — including the degraded banner when
+  // the service is stopped, which is the FR-7 fallback behaviour the project
+  // report documents and acceptance test MT-01 checks.
+  const isLocalHost =
+    typeof window !== 'undefined' &&
+    /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+
+  if (plan?.degraded && !isLocalHost) {
+    return null;
+  }
+
   return (
     <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
       {/* Header */}
