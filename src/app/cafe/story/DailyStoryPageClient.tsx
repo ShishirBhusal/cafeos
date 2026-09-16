@@ -5,16 +5,8 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, Calendar } from 'lucide-react';
 import DailyStoryCard from '@/components/cafe/DailyStoryCard';
+import { getNepaliDateString } from '@/lib/nepalTime';
 
-// Nepal timezone offset: UTC+5:45 = 345 minutes
-const NEPAL_OFFSET_MINUTES = 5 * 60 + 45;
-
-function getNepaliDateStringClient(): string {
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const nepalMs = utcMs + NEPAL_OFFSET_MINUTES * 60000;
-  return new Date(nepalMs).toISOString().split('T')[0];
-}
 
 interface DailyStoryPageClientProps {
   cafeId: string;
@@ -27,7 +19,7 @@ export default function DailyStoryPageClient({ cafeId, cafeName, initialStory }:
   const [story, setStory] = useState(initialStory);
   
   // Use Nepal timezone for date calculations
-  const todayStr = useMemo(() => getNepaliDateStringClient(), []);
+  const todayStr = useMemo(() => getNepaliDateString(), []);
   const [currentDate, setCurrentDate] = useState(todayStr);
   const [isLoading, setIsLoading] = useState(false);
 

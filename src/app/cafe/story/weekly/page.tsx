@@ -12,7 +12,7 @@ import {
   Trophy,
   Users,
   ShoppingBag,
-  DollarSign,
+  Banknote,
   BarChart3,
   Sparkles,
   ChevronLeft,
@@ -259,7 +259,7 @@ export default async function WeeklyReviewPage({ searchParams }: PageProps) {
               </div>
 
               <div className="bg-white rounded-xl border border-stone-200 p-4 text-center">
-                <DollarSign className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
+                <Banknote className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-stone-900 tabular-nums">
                   {weeklyData.what_happened.total_orders > 0 
                     ? formatRs(Math.round(weeklyData.what_happened.total_revenue_cents / weeklyData.what_happened.total_orders))

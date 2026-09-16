@@ -15,13 +15,27 @@
 const NEPAL_OFFSET_MINUTES = 5 * 60 + 45; // 345 minutes = 5 hours 45 minutes
 
 /**
+ * Shift an instant onto Nepal's wall clock, so the returned Date's *UTC*
+ * getters read out Nepal-local values.
+ *
+ * `Date.getTime()` is already an absolute UTC epoch, so Nepal time is simply
+ * that epoch plus the offset. The previous version also added
+ * `getTimezoneOffset()`, which cancelled the shift on any host whose own clock
+ * is set to Nepal (offset -345) and skewed it on every other non-UTC host.
+ * Vercel runs in UTC so production looked right, but running the app on a
+ * Nepali laptop reported UTC — 5h45m behind — which is precisely the class of
+ * bug this module exists to prevent: wrong greeting, "today" starting late,
+ * and cafes shown as closed while they are open.
+ */
+function toNepal(date: Date): Date {
+  return new Date(date.getTime() + NEPAL_OFFSET_MINUTES * 60000);
+}
+
+/**
  * Get the current date in Nepal timezone as YYYY-MM-DD string
  */
 export function getNepaliDateString(): string {
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const nepalMs = utcMs + NEPAL_OFFSET_MINUTES * 60000;
-  const nepalDate = new Date(nepalMs);
+  const nepalDate = toNepal(new Date());
   return nepalDate.toISOString().split('T')[0];
 }
 
@@ -29,20 +43,14 @@ export function getNepaliDateString(): string {
  * Get the current hour (0-23) in Nepal timezone
  */
 export function getNepaliHour(): number {
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const nepalMs = utcMs + NEPAL_OFFSET_MINUTES * 60000;
-  return new Date(nepalMs).getUTCHours();
+  return toNepal(new Date()).getUTCHours();
 }
 
 /**
  * Get the current minute (0-59) in Nepal timezone
  */
 export function getNepaliMinute(): number {
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const nepalMs = utcMs + NEPAL_OFFSET_MINUTES * 60000;
-  return new Date(nepalMs).getUTCMinutes();
+  return toNepal(new Date()).getUTCMinutes();
 }
 
 /**
@@ -58,10 +66,7 @@ export function getNepaliTimeString(): string {
  * Get the current day of week (0=Sunday, 6=Saturday) in Nepal timezone
  */
 export function getNepaliDayOfWeek(): number {
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const nepalMs = utcMs + NEPAL_OFFSET_MINUTES * 60000;
-  return new Date(nepalMs).getUTCDay();
+  return toNepal(new Date()).getUTCDay();
 }
 
 /**
@@ -116,10 +121,7 @@ export function getGreeting(): string {
  * Note: The returned Date object's UTC methods will give Nepal time values
  */
 export function getNepaliNow(): Date {
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const nepalMs = utcMs + NEPAL_OFFSET_MINUTES * 60000;
-  return new Date(nepalMs);
+  return toNepal(new Date());
 }
 
 /**
@@ -201,10 +203,7 @@ export function isOpenNow(hours: Record<string, { open: string; close: string; c
  * @returns Formatted string like "Feb 19, 2:30 PM"
  */
 export function formatToNepalTime(isoString: string): string {
-  const date = new Date(isoString);
-  const utcMs = date.getTime() + date.getTimezoneOffset() * 60000;
-  const nepalMs = utcMs + NEPAL_OFFSET_MINUTES * 60000;
-  const nepalDate = new Date(nepalMs);
+  const nepalDate = toNepal(new Date(isoString));
   
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const month = months[nepalDate.getUTCMonth()];

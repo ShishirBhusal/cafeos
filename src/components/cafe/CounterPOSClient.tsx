@@ -18,11 +18,10 @@ import {
   Loader2,
   Search,
   Clock,
-  DollarSign,
   User,
   Star,
   ArrowLeft,
-  CreditCard,
+  CreditCard
 } from 'lucide-react';
 import CloseShiftModal from './CloseShiftModal';
 import OpenShiftModal from './OpenShiftModal';

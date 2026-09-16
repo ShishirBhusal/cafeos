@@ -15,6 +15,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { cafeSlug as toCafeSlug } from '@/lib/cafeSlug';
 
 interface MenuItem {
   id: string;
@@ -201,7 +202,7 @@ export default function CustomerMenuClient({
   const formatPrice = (cents: number) => `Rs ${(cents / 100).toLocaleString('en-NP')}`;
 
   // Generate cafe slug for tracking link
-  const cafeSlug = cafeName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const cafeSlug = toCafeSlug(cafeName);
 
   // Order success screen
   if (orderSuccess) {

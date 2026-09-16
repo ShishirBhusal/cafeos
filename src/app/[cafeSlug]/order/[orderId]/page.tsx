@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import OrderTrackingClient from '@/components/cafe/OrderTrackingClient';
+import { matchesCafeSlug } from '@/lib/cafeSlug';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,7 +46,7 @@ export default async function OrderTrackingPage({ params }: PageProps) {
     .eq('verification_status', 'verified');
   
   const cafe = allCafes?.find(c => 
-    c.business_name.toLowerCase().replace(/\s+/g, '-') === cafeSlug.toLowerCase()
+    matchesCafeSlug(c.business_name, cafeSlug)
   );
   
   if (!cafe) {

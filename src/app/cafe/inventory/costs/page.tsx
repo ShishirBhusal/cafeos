@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   TrendingUp,
   TrendingDown,
-  DollarSign,
+  Banknote,
   AlertCircle,
   Star,
   Zap,
@@ -114,7 +114,7 @@ export default async function FoodCostsPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl p-4 shadow-sm">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-              <DollarSign className="w-4 h-4" />
+              <Banknote className="w-4 h-4" />
               Avg Margin
             </div>
             <div className={`text-2xl font-bold ${getMarginColor(avgMargin)}`}>

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import CafePageLayout from '@/components/cafe/CafePageLayout';
 import CafeQRCode from '@/components/cafe/CafeQRCode';
+import { getAppUrl } from '@/lib/appUrl';
 import {
   ArrowLeft,
   Store,
@@ -14,6 +15,7 @@ import {
   Printer,
   Wallet
 } from 'lucide-react';
+import { cafeSlug as toCafeSlug } from '@/lib/cafeSlug';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,8 +58,8 @@ export default async function CafeSettingsPage() {
     .single();
 
   // Generate QR code URL for customer ordering
-  const cafeSlug = cafeProfile?.business_name?.toLowerCase().replace(/\s+/g, '-') || 'cafe';
-  const qrOrderUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${cafeSlug}/menu`;
+  const cafeSlug = cafeProfile?.business_name ? toCafeSlug(cafeProfile.business_name) : 'cafe';
+  const qrOrderUrl = `${await getAppUrl()}/${cafeSlug}/menu`;
 
   const settingsSections = [
     {

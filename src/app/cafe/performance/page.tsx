@@ -5,7 +5,7 @@ import Link from 'next/link';
 import CafePageLayout from '@/components/cafe/CafePageLayout';
 import {
   TrendingUp,
-  DollarSign,
+  Banknote,
   ShoppingCart,
   Clock,
   Award,
@@ -15,6 +15,7 @@ import {
   Users,
   Calendar
 } from 'lucide-react';
+import { fetchAllRows } from '@/lib/fetchAllRows';
 
 export const dynamic = 'force-dynamic';
 
@@ -80,12 +81,17 @@ export default async function PerformanceDashboardPage() {
     .gte('opened_at', thirtyDaysAgo.toISOString())
     .order('opened_at', { ascending: false });
 
-  // Fetch orders for the last 30 days
-  const { data: orders } = await supabase
-    .from('orders')
-    .select('id, total_cents, created_at, user_id')
-    .eq('cafe_id', cafeId)
-    .gte('created_at', thirtyDaysAgo.toISOString());
+  // Fetch orders for the last 30 days. Paged: a busy cafe clears PostgREST's
+  // 1000-row response cap well inside a month, and a truncated result would
+  // silently understate revenue and every staff total on this page.
+  const orders = await fetchAllRows<{ id: string; total_cents: number; created_at: string; user_id: string | null }>(
+    () => supabase
+      .from('orders')
+      .select('id, total_cents, created_at, user_id')
+      .eq('cafe_id', cafeId)
+      .gte('created_at', thirtyDaysAgo.toISOString())
+      .order('created_at', { ascending: true })
+  );
 
   // Fetch user profiles for staff names
   const staffIds = [...new Set([
@@ -178,7 +184,7 @@ export default async function PerformanceDashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl p-4 shadow-sm">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-              <DollarSign className="w-4 h-4" />
+              <Banknote className="w-4 h-4" />
               Total Sales
             </div>
             <div className="text-xl font-bold text-gray-900">{formatPrice(totalSales)}</div>

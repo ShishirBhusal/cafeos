@@ -14,6 +14,7 @@ import {
   Check,
   AlertCircle
 } from 'lucide-react';
+import { cafeSlug } from '@/lib/cafeSlug';
 
 interface CafeProfileData {
   logo_url: string | null;
@@ -128,7 +129,7 @@ export default function CafeProfileForm({ cafeId, initialData, businessName }: C
     }));
   };
 
-  const slug = businessName.toLowerCase().replace(/\s+/g, '-');
+  const slug = cafeSlug(businessName);
   const previewUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/${slug}`;
 
   return (

@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import CustomerMenuClient from '@/components/cafe/CustomerMenuClient';
 import { getCafeMenuItems, getCategories } from '@/lib/cafe-context';
+import { matchesCafeSlug } from '@/lib/cafeSlug';
 
 export const dynamic = 'force-dynamic';
 
@@ -79,7 +80,7 @@ export default async function CustomerMenuPage({ params, searchParams }: PagePro
       .eq('verification_status', 'verified');
     
     const matchedCafe = allCafes?.find(cafe => 
-      cafe.business_name.toLowerCase().replace(/\s+/g, '-') === cafeSlug.toLowerCase()
+      matchesCafeSlug(cafe.business_name, cafeSlug)
     );
     
     if (!matchedCafe) {

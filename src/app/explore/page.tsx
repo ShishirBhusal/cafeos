@@ -14,6 +14,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { isOpenNow as checkIsOpenNow } from '@/lib/nepalTime';
+import { cafeSlug } from '@/lib/cafeSlug';
 
 export const dynamic = 'force-dynamic';
 
@@ -160,7 +161,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
     return 0;
   });
 
-  const getSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const getSlug = cafeSlug;
   const areas = [...new Set(cafeList.map((c: any) => c.profile?.area).filter(Boolean))];
 
   const filteredCafes = cafeList.filter((c: any) => {
@@ -191,7 +192,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
             Find your next cup
           </h1>
           <p className="text-stone-500 mb-6">
-            Discover cafes across Nepal — {cafeList.length} cafes, {cafeList.filter((c: any) => c.isOpen).length} open now
+            Discover cafes across Nepal — {cafeList.length} {cafeList.length === 1 ? 'cafe' : 'cafes'}, {cafeList.filter((c: any) => c.isOpen).length} open now
           </p>
 
           <form method="GET" action="/explore" className="flex flex-col sm:flex-row gap-3 max-w-2xl">

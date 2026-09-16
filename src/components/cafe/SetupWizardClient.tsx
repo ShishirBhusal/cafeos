@@ -12,7 +12,7 @@ import {
   Check,
   Loader2,
   Sparkles,
-  DollarSign,
+  Banknote,
   TrendingUp,
   Store,
   PartyPopper,
@@ -391,7 +391,7 @@ export default function SetupWizardClient({ cafeId, cafeName, templates }: Setup
               <div className="divide-y divide-gray-100">
                 {fixedCosts.map((cost, index) => (
                   <div key={cost.type} className="flex items-center gap-3 px-4 py-4">
-                    <DollarSign className="w-5 h-5 text-gray-400 shrink-0" />
+                    <Banknote className="w-5 h-5 text-gray-400 shrink-0" />
                     <span className="flex-1 font-medium text-gray-900">{cost.label}</span>
                     <div className="flex items-center gap-1">
                       <span className="text-sm text-gray-500">Rs</span>

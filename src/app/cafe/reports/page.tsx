@@ -6,17 +6,17 @@ import CafePageLayout from '@/components/cafe/CafePageLayout';
 import {
   TrendingUp,
   TrendingDown,
-  DollarSign,
+  Banknote,
   ShoppingBag,
   Receipt,
   Users,
   Repeat,
   Clock,
-  Banknote,
-  Smartphone,
+  Smartphone
 } from 'lucide-react';
 import { formatRs, calculateDailyFixedCost } from '@/lib/formatRs';
 import { getNepaliDateString, nepalDateToUTCRange, getNepaliDateDaysAgo } from '@/lib/nepalTime';
+import { fetchAllRows } from '@/lib/fetchAllRows';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,13 +86,18 @@ export default async function CafeReportsPage({ searchParams }: PageProps) {
   const { start: startUTC } = nepalDateToUTCRange(startDateStr);
   const { end: endUTC } = nepalDateToUTCRange(endDateStr);
 
-  // Fetch orders for period
-  const { data: orders } = await supabase
-    .from('orders')
-    .select('id, total_cents, payment_status, created_at')
-    .eq('cafe_id', cafeId)
-    .gte('created_at', startUTC)
-    .lte('created_at', endUTC);
+  // Fetch orders for period. Paged past PostgREST's 1000-row cap — a monthly
+  // report on a busy cafe exceeds it, and the shortfall shows up as missing
+  // revenue rather than as an error.
+  const orders = await fetchAllRows<{ id: string; total_cents: number; payment_status: string; created_at: string }>(
+    () => supabase
+      .from('orders')
+      .select('id, total_cents, payment_status, created_at')
+      .eq('cafe_id', cafeId)
+      .gte('created_at', startUTC)
+      .lte('created_at', endUTC)
+      .order('created_at', { ascending: true })
+  );
 
   // Fetch expenses for period
   const { data: expenses } = await supabase
@@ -187,7 +192,7 @@ export default async function CafeReportsPage({ searchParams }: PageProps) {
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-green-100 rounded-xl">
-              <DollarSign className="w-6 h-6 text-green-600" />
+              <Banknote className="w-6 h-6 text-green-600" />
             </div>
             <div>
               <p className="text-sm text-gray-500">{periodLabels[period]} Revenue</p>

@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import CafeShareButton from '@/components/cafe/CafeShareButton';
 import CafeQRCode from '@/components/cafe/CafeQRCode';
+import { getAppUrl } from '@/lib/appUrl';
+import { cafeSlug as cafeSlug2, matchesCafeSlug } from '@/lib/cafeSlug';
 import { isOpenNow as checkIsOpenNow } from '@/lib/nepalTime';
 
 export const dynamic = 'force-dynamic';
@@ -99,7 +101,7 @@ export default async function CafeWebsitePage({ params }: PageProps) {
     .eq('verification_status', 'verified');
   
   const cafe = allCafes?.find(c => 
-    c.business_name.toLowerCase().replace(/\s+/g, '-') === cafeSlug.toLowerCase()
+    matchesCafeSlug(c.business_name, cafeSlug)
   );
   
   if (!cafe) {
@@ -153,8 +155,8 @@ export default async function CafeWebsitePage({ params }: PageProps) {
 
   const categories = [...new Set(products?.map(p => (p.categories as any)?.name).filter(Boolean))];
   const featuredItems = products?.slice(0, 3) || [];
-  const slug = cafe.business_name.toLowerCase().replace(/\s+/g, '-');
-  const cafeUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://cafeos.com.np'}/${slug}`;
+  const slug = cafeSlug2(cafe.business_name);
+  const cafeUrl = `${await getAppUrl()}/${slug}`;
 
   return (
     <div className="min-h-screen bg-white">
