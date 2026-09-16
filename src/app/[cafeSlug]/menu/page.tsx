@@ -106,7 +106,7 @@ async function renderMenuPage(
   
   // Fetch menu items using shared utility
   const menuItems = await getCafeMenuItems(supabase, cafeId) as MenuItem[];
-  const allCategories = await getCategories(supabase);
+  const allCategories = await getCategories(supabase, cafeId);
   
   // Filter to only categories that have items
   const activeCategories: Category[] = allCategories.filter((cat: Category) =>

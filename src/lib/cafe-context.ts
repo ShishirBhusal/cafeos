@@ -109,12 +109,38 @@ export async function getCafeMenuItems(
 /**
  * Gets all categories
  */
-export async function getCategories(supabase: SupabaseClient) {
+export async function getCategories(supabase: SupabaseClient, cafeId?: string) {
+  // Without a cafe, fall back to every category (admin surfaces still want that).
+  if (!cafeId) {
+    const { data } = await supabase
+      .from('categories')
+      .select('id, name, slug')
+      .order('name');
+    return data || [];
+  }
+
+  // Only the categories this cafe actually sells in. The categories table is
+  // shared across every vendor on the platform, so an unfiltered read put other
+  // businesses' categories (salon services, retail) into the cafe POS.
+  //
+  // Derived from the cafe's own products rather than categories.vendor_id,
+  // because a cafe may legitimately use a category row it does not own.
+  const { data: products } = await supabase
+    .from('products')
+    .select('category_id')
+    .eq('vendor_id', cafeId)
+    .eq('is_active', true)
+    .not('category_id', 'is', null);
+
+  const ids = [...new Set((products || []).map((p: any) => p.category_id))];
+  if (ids.length === 0) return [];
+
   const { data } = await supabase
     .from('categories')
     .select('id, name, slug')
+    .in('id', ids)
     .order('name');
-  
+
   return data || [];
 }
 

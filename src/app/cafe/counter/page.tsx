@@ -82,7 +82,7 @@ export default async function CafeCounterPage() {
   
   // Fetch menu items using shared utility
   const menuItems = await getCafeMenuItems(supabase, cafeId) as MenuItem[];
-  const categories = await getCategories(supabase) as Category[];
+  const categories = await getCategories(supabase, cafeId) as Category[];
   
   console.log('[Counter] Loaded', menuItems.length, 'menu items,', categories.length, 'categories');
 
