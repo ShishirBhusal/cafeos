@@ -71,33 +71,20 @@ that 404'd on arrival. One `src/lib/cafeSlug.ts` now serves all six call sites, 
 
 ## Open — needs Shishir, I was blocked
 
-### A. Two one-row database fixes (I was denied write access to the DB)
+### A. Two one-row database fixes — DONE (16 Sep, authorised by Shishir)
 
-Both are data, not code. Either run them in the Supabase SQL editor, or grant the session
-permission to PATCH via `scripts/_dbq.mjs`.
+Both applied against the live database and verified on the deployed site.
 
-1. **The demo cafe is invisible on /explore.** `/explore` gates on `business_type`; "Test
-   business" is stored as `"Other"`, so only "The Tea House" (`chiya_pasal`) is listed.
+1. `vendor_profiles.business_type` for the demo cafe: `"Other"` -> `"cafe"`. /explore now lists
+   **2 cafes** — "Test business" (13 items) alongside The Tea House.
+2. The stray "test item" under "Acrylic Systems" on The Tea House's public menu was **soft
+   deleted** (`products.is_active = false`, id `93d757a1-628b-4132-a4e4-2e4c805738bb`). Its menu
+   went 29 -> 28 items and the "Acrylic Systems" heading is gone. Reversible: set `is_active`
+   back to `true`.
 
-   ```sql
-   update vendor_profiles set business_type = 'cafe'
-   where user_id = 'b40f741d-b1ce-45ae-a5c6-5703a3e9d182';
-   ```
-
-   I tried fixing this in code instead — deriving "is a cafe" from owning `cafe_ingredients` —
-   and **reverted it**: those tables are RLS-blocked to anonymous visitors, so the query returns
-   an empty set on the public page and the filter would have been inert. The data is the right fix.
-
-2. **A stray test product sits on The Tea House's public menu.** `/the-tea-house/menu` shows a
-   category **"Acrylic Systems"** holding **"test item"** (varient1 Rs 13 / varient2 Rs 20). This
-   is *not* a KB Stylish leak — both rows genuinely belong to the Tea House vendor; someone
-   created them there while testing. The category scoping fixed last session is working correctly.
-   Rabindra can delete it from `/cafe/menu` (the edit/delete flow added last session works), or:
-
-   ```sql
-   update products set is_active = false
-   where vendor_id = '8e80ead5-ce95-4bad-ab30-d4f54555584b' and name = 'test item';
-   ```
+Note the demo cafe has no `cafe_profiles` content — no tagline, area or opening hours — so its
+/explore card is bare next to The Tea House's. Filling that in from `/cafe/settings/profile`
+would make it present better on defense day.
 
 ### B. Nothing behind the login was exercised
 
